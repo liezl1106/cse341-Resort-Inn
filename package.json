@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "express": "^4.21.2",
+    "npm": "^11.1.0"
+  },
+  "name": "cse341-resort-inn",
+  "version": "1.0.0",
+  "description": "cse341 Team Project by Jack Loo, Boluwatife Omotoyinbo, Dehyu DM Cassell, Dereck Romero Moscoso, Liezl Lizardo",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liezl1106/cse341-Resort-Inn.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/liezl1106/cse341-Resort-Inn/issues"
+  },
+  "homepage": "https://github.com/liezl1106/cse341-Resort-Inn#readme"
+}
