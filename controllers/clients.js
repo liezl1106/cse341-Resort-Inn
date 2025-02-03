@@ -24,8 +24,27 @@ const getClientsById = async(req, res) =>{
 // Add a new client
 const addClient = async (req, res) => {
     try {
-        const clientData = req.body;
-        const result = await mongodb.getDatabase().db().collection('clients').insertOne(clientData);
+        const {name, phone, email, address, membershipLevel, preferences, loyaltyPoints} = req.body;
+
+        if (!name || !phone || !email || !address || !membershipLevel || !preferences || !loyaltyPoints === undefined) {
+            return res.status(400).json({error: 'Missing required fields'});
+        }
+
+        const newClient = {
+            name,
+            phone,
+            email,
+            address,
+            membershipLevel,
+            preferences: {
+                roomType: preferences.roomType,
+                dietaryRestrictions: preferences.dietaryRestrictions,
+                preferredActivities: preferences.preferredActivities
+            },
+            loyaltyPoints
+        };
+
+        const result = await mongodb.getDatabase().db().collection('clients').insertOne(newClient);
         res.status(201).json({ message: 'Client added successfully', clientId: result.insertedId });
     } catch (error) {
         res.status(500).json({ error: 'Failed to add client', details: error.message });
@@ -36,7 +55,25 @@ const addClient = async (req, res) => {
 const updateClient = async (req, res) => {
     try {
         const clientId = new ObjectId(req.params.id);
-        const updateData = req.body;
+        const {name, phone, email, address, membershipLevel, preferences, loyaltyPoints} = req.body;
+
+        if (!name || !phone || !email || !address || !membershipLevel || !preferences || !loyaltyPoints === undefined) {
+            return res.status(400).json({error: 'Missing required fields'});
+        }
+
+        const updateData = {
+            name,
+            phone,
+            email,
+            address,
+            membershipLevel,
+            preferences: {
+                roomType: preferences.roomType,
+                dietaryRestrictions: preferences.dietaryRestrictions,
+                preferredActivities: preferences.preferredActivities
+            },
+        };
+
         const result = await mongodb.getDatabase().db().collection('clients').updateOne(
             { _id: clientId },
             { $set: updateData }

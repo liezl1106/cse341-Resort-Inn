@@ -23,10 +23,10 @@ const getActivityById = async(req, res) => {
 // Add a new activity
 const addActivity = async (req, res) => {
     try {
-        const { activityName, description, availableSlots, clientId } = req.body;
-        const newActivity = new Activity({ activityName, description, availableSlots, clientId });
-        await newActivity.save();
-        res.status(201).json(newActivity);
+        const { activityName, description, schedule, capacity, price, status } = req.body;
+        const newActivity = new Activity({ activityName, description, schedule, capacity, price, status });
+        await mongodb.getDatabase().db().collection('activities').insertOne(newActivity);
+        res.status(201).json({message: 'Activity added successfully', activity: newActivity});
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -35,10 +35,16 @@ const addActivity = async (req, res) => {
 // Update an activity
 const updateActivity = async (req, res) => {
     try {
-        const { activityId } = req.params;
-        const { activityName, description, availableSlots, clientId } = req.body;
-        const updatedActivity = await Activity.findByIdAndUpdate(activityId, { activityName, description, availableSlots, clientId }, { new: true });
-        res.status(200).json(updatedActivity);
+        const activityId  = new ObjectId(req.params.id);
+        const { activityName, description, schedule, capacity, price, status } = req.body;
+        const updateActivity = { activityName, description, schedule, capacity, price, status };
+        
+        const result = await mongodb.getDatabase().db().collection('Activities').updateOne({_id: activityId}, {$set: updateActivity});
+
+        if (result.modifiedCount === 0){
+            return res.status(404).json({message: 'Activity not found or no changes made.'});
+        }
+        
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
