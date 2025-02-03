@@ -31,8 +31,41 @@ const getReservationByClientId = async (req, res) => {
     res.status(200).json(result);
 }
 
+// Add a new reservation
+const addReservation = async (req, res) => {
+    try {
+        const reservationData = req.body;
+        const result = await mongodb.getDatabase().db().collection('Reservations').insertOne(reservationData);
+        res.status(201).json({ message: 'Reservation added successfully', reservationId: result.insertedId });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to add reservation', details: error.message });
+    }
+};
+
+// Update a reservation
+const updateReservation = async (req, res) => {
+    try {
+        const reservationId = new ObjectId(req.params.id);
+        const updateData = req.body;
+        const result = await mongodb.getDatabase().db().collection('Reservations').updateOne(
+            { _id: reservationId },
+            { $set: updateData }
+        );
+
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ error: 'Reservation not found.' });
+        }
+
+        res.status(200).json({ message: 'Reservation updated successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update reservation', details: error.message });
+    }
+};
+
 module.exports = {
     getAllReservation,
     getReservationById,
-    getReservationByClientId
-}
+    getReservationByClientId,
+    addReservation,
+    updateReservation,
+};
