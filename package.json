@@ -1,9 +1,14 @@
 {
   "dependencies": {
     "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "ejs": "^3.1.10",
     "express": "^4.21.2",
     "express-session": "^1.18.1",
-    "npm": "^11.1.0"
+    "mongodb": "^6.13.0",
+    "npm": "^11.1.0",
+    "swagger-ui-express": "^5.0.1",
+    "yaml": "^2.7.0"
   },
   "name": "cse341-resort-inn",
   "version": "1.0.0",
@@ -24,5 +29,13 @@
   "bugs": {
     "url": "https://github.com/liezl1106/cse341-Resort-Inn/issues"
   },
-  "homepage": "https://github.com/liezl1106/cse341-Resort-Inn#readme"
+  "homepage": "https://github.com/liezl1106/cse341-Resort-Inn#readme",
+  "devDependencies": {
+    "eslint": "^9.19.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.3",
+    "nodemon": "^3.1.9",
+    "prettier": "^3.4.2",
+    "swagger-autogen": "^2.23.7"
+  }
 }
