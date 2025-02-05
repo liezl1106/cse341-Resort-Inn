@@ -9,7 +9,6 @@ const getAllReservation = async (req, res) => {
 }
 
 //get Reservation by Id
-
 const getReservationById = async(req, res) => {
     const reservationsId = new ObjectId(req.params.id);
     const result = await mongodb.getDatabase().db().collection('Reservations').findOne({_id: reservationsId});
@@ -22,7 +21,6 @@ const getReservationById = async(req, res) => {
 }
 
 //get reservation by client ID
-
 const getReservationByClientId = async (req, res) => {
     const clientId = req.params.clientId;
     const result = await mongodb.getDatabase().db().collection('Reservations').find({clientId}).toArray();
