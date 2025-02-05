@@ -35,10 +35,24 @@ const getRestaurantReservations = async (req, res) =>{
 // Add a new restaurant
 const addRestaurant = async (req, res) => {
     try {
-        const restaurantData = req.body;
-        const result = await mongodb.getDatabase().db().collection('Restaurants').insertOne(restaurantData);
+        const { clientId, restaurantType, openingDate, closingDate, status, averageCost, paymentStatus } = req.body;
 
-        res.status(201).json({ message: 'Restaurant added successfully', restaurantId: result.insertedId });
+        if (!clientId || !restaurantType || !openingDate || !closingDate || !status || !averageCost || !paymentStatus) {
+            return res.status(400).json({ error: 'All fields are required.' });
+        }
+
+        const restaurantData = {
+            clientId: new ObjectId(clientId),
+            restaurantType,
+            openingDate: new Date(openingDate),
+            closingDate: new Date(closingDate),
+            status,
+            averageCost: Number(averageCost),
+            paymentStatus,
+        };
+
+        const result = await mongodb.getDatabase().db().collection('Restaurants').insertOne(restaurantData);
+     res.status(201).json({ message: 'Restaurant added successfully', restaurantId: result.insertedId });
     } catch (error) {
         res.status(500).json({ error: 'Failed to add restaurant', details: error.message });
     }
@@ -48,7 +62,21 @@ const addRestaurant = async (req, res) => {
 const updateRestaurant = async (req, res) => {
     try {
         const restaurantId = new ObjectId(req.params.id);
-        const updateData = req.body;
+        const { clientId, restaurantType, openingDate, closingDate, status, averageCost, paymentStatus } = req.body;
+
+        if (!clientId && !restaurantType && !openingDate && !closingDate && !status && !averageCost && !paymentStatus) {
+            return res.status(400).json({ error: 'At least one field must be provided for update.' });
+        }
+
+        const updateData = {};
+
+        if (clientId) updateData.clientId = new ObjectId(clientId);
+        if (restaurantType) updateData.restaurantType = restaurantType;
+        if (openingDate) updateData.openingDate = new Date(openingDate);
+        if (closingDate) updateData.closingDate = new Date(closingDate);
+        if (status) updateData.status = status;
+        if (averageCost) updateData.averageCost = Number(averageCost);
+        if (paymentStatus) updateData.paymentStatus = paymentStatus;
 
         const result = await mongodb.getDatabase().db().collection('Restaurants').updateOne(
             { _id: restaurantId },
