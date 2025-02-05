@@ -21,7 +21,77 @@ const getClientsById = async(req, res) =>{
     })
 }
 
+// Add a new client
+const addClient = async (req, res) => {
+    try {
+        const {name, phone, email, address, membershipLevel, preferences, loyaltyPoints} = req.body;
+
+        if (!name || !phone || !email || !address || !membershipLevel || !preferences || !loyaltyPoints === undefined) {
+            return res.status(400).json({error: 'Missing required fields'});
+        }
+
+        const newClient = {
+            name,
+            phone,
+            email,
+            address,
+            membershipLevel,
+            preferences: {
+                roomType: preferences.roomType,
+                dietaryRestrictions: preferences.dietaryRestrictions,
+                preferredActivities: preferences.preferredActivities
+            },
+            loyaltyPoints
+        };
+
+        const result = await mongodb.getDatabase().db().collection('clients').insertOne(newClient);
+        res.status(201).json({ message: 'Client added successfully', clientId: result.insertedId });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to add client', details: error.message });
+    }
+};
+
+// Update a client
+const updateClient = async (req, res) => {
+    try {
+        const clientId = new ObjectId(req.params.id);
+        const {name, phone, email, address, membershipLevel, preferences, loyaltyPoints} = req.body;
+
+        if (!name || !phone || !email || !address || !membershipLevel || !preferences || !loyaltyPoints === undefined) {
+            return res.status(400).json({error: 'Missing required fields'});
+        }
+
+        const updateData = {
+            name,
+            phone,
+            email,
+            address,
+            membershipLevel,
+            preferences: {
+                roomType: preferences.roomType,
+                dietaryRestrictions: preferences.dietaryRestrictions,
+                preferredActivities: preferences.preferredActivities
+            },
+        };
+
+        const result = await mongodb.getDatabase().db().collection('clients').updateOne(
+            { _id: clientId },
+            { $set: updateData }
+        );
+
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ error: 'Client not found' });
+        }
+
+        res.status(200).json({ message: 'Client updated successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update client', details: error.message });
+    }
+};
+
 module.exports = {
     getClients,
-    getClientsById
-}
+    getClientsById,
+    addClient,
+    updateClient,
+};
