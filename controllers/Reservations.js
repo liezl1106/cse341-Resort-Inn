@@ -34,7 +34,22 @@ const getReservationByClientId = async (req, res) => {
 // Add a new reservation
 const addReservation = async (req, res) => {
     try {
-        const reservationData = req.body;
+        const { clientId, roomType, checkInDate, checkOutDate, status, totalPrice, paymentStatus } = req.body;
+
+        if (!clientId || !roomType || !checkInDate || !checkOutDate || !status || !totalPrice || !paymentStatus) {
+            return res.status(400).json({error: 'All fields are required.'});
+        }
+
+        const reservationData = {
+            clientId: new ObjectId(clientId),
+            roomType,
+            checkInDate: new Date(checkInDate),
+            checkOutDate: new Date(checkOutDate),
+            status,
+            totalPrice,
+            paymentStatus
+        };
+
         const result = await mongodb.getDatabase().db().collection('Reservations').insertOne(reservationData);
         res.status(201).json({ message: 'Reservation added successfully', reservationId: result.insertedId });
     } catch (error) {
@@ -46,7 +61,23 @@ const addReservation = async (req, res) => {
 const updateReservation = async (req, res) => {
     try {
         const reservationId = new ObjectId(req.params.id);
-        const updateData = req.body;
+        const { clientId, roomType, checkInDate, checkOutDate, status, totalPrice, paymentStatus } = req.body;
+
+        if (!clientId && !roomType && !checkInDate && !checkOutDate && !status && !totalPrice && !paymentStatus) {
+            return res.status(400).json({error: 'At least one field must be provided for update.'})
+        }
+
+        //update object
+        const updateData = {}
+
+        if (clientId) updateData.clientId = new ObjectId(clientId);
+        if (roomType) updateData.roomType = roomType;
+        if (checkInDate) updateData.checkInDate = new Date(checkInDate);
+        if (checkOutDate) updateData.checkOutDate =  new Date(checkOutDate);
+        if (status) updateData.status = status;
+        if (totalPrice) updateData.totalPrice = Number(totalPrice);
+        if (paymentStatus) updateData.paymentStatus = paymentStatus;
+
         const result = await mongodb.getDatabase().db().collection('Reservations').updateOne(
             { _id: reservationId },
             { $set: updateData }
