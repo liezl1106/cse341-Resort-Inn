@@ -35,20 +35,36 @@ const getRestaurantReservations = async (req, res) =>{
 // Add a new restaurant
 const addRestaurant = async (req, res) => {
     try {
-        const { clientId, restaurantType, openingDate, closingDate, status, averageCost, paymentStatus } = req.body;
+        const { clientId, restaurantName, cuisineType, menu, reservations, location } = req.body;
 
-        if (!clientId || !restaurantType || !openingDate || !closingDate || !status || !averageCost || !paymentStatus) {
+        if (!clientId || !restaurantName || !cuisineType || !menu || !reservations || !location) {
             return res.status(400).json({ error: 'All fields are required.' });
         }
 
+        //format menu
+        const formattedMenu = menubar.map(item =>({
+            itemName: item.itemName,
+            price: Number(item.price),
+            dietaryInfo: Array.isArray(item.dietaryInfo) ? item.dietaryInfo : []
+        }));
+
+
+        //reservations
+        const formattedReservations = Array.isArray(reservations)
+            ? reservations.map(res => ({
+                reservationsDate: new Date(res.reservationDate),
+                numOfGuests: Number(res.numOfGuests),
+                status: res.status
+            }))
+            : [];
+
         const restaurantData = {
             clientId: new ObjectId(clientId),
-            restaurantType,
-            openingDate: new Date(openingDate),
-            closingDate: new Date(closingDate),
-            status,
-            averageCost: Number(averageCost),
-            paymentStatus,
+            restaurantName,
+            cuisineType,
+            menu: formattedMenu,
+            reservations: formattedReservations,
+            location
         };
 
         const result = await mongodb.getDatabase().db().collection('Restaurants').insertOne(restaurantData);
@@ -62,20 +78,32 @@ const addRestaurant = async (req, res) => {
 const updateRestaurant = async (req, res) => {
     try {
         const restaurantId = new ObjectId(req.params.id);
-        const { clientId, restaurantType, openingDate, closingDate, status, averageCost, paymentStatus } = req.body;
+        const { clientId, restaurantName, cuisineType, menu, reservations, location } = req.body;
 
-        if (!clientId && !restaurantType && !openingDate && !closingDate && !status && !averageCost && !paymentStatus) {
+        if (!clientId && !restaurantName && !cuisineType && !menu && !reservations && !location) {
             return res.status(400).json({ error: 'At least one field must be provided for update.' });
         }
 
         const updateData = {};
 
         if (clientId) updateData.clientId = new ObjectId(clientId);
-        if (restaurantType) updateData.restaurantType = restaurantType;
-        if (openingDate) updateData.openingDate = new Date(openingDate);
-        if (closingDate) updateData.closingDate = new Date(closingDate);
-        if (status) updateData.status = status;
-        if (averageCost) updateData.averageCost = Number(averageCost);
+        if (restaurantName) updateData.restaurantName = restaurantName;
+        if (cuisineType) updateData.cuisineType = cuisineType;
+        if (menu && Array.isArray(menu)) {
+            updateData.menu = menu.map(item => ({
+                itemName: item.itemName,
+                price: Number(item.price),
+                dietaryInfo: Array.isArray(item.dietaryInfo) ? item.dietaryInfo : []
+            }));
+        }
+        if (reservations && Array.isArray(reservations)) {
+            updateData.reservations = reservations.map(res => ({
+                reservationDate: new Date(res.reservationDate),
+                numOfGuests: Number(res.numOfGuests),
+                status: res.status
+            }));
+        }
+        if (location) updateData.location = location;
         if (paymentStatus) updateData.paymentStatus = paymentStatus;
 
         const result = await mongodb.getDatabase().db().collection('Restaurants').updateOne(
