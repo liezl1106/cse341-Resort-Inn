@@ -11,21 +11,24 @@ const restaurantsController = require('../controllers/Restaurants');
 
 router.get('/clients', clientsController.getClients);
 router.get('/clients/:id', clientsController.getClientsById);
-
+router.delete('/clients/:id', clientsController.deleteClient);
 
 //Routes for activities
 router.get('/activities', activitiesController.getAllActivities);
 router.get('/activities/:id', activitiesController.getActivityById);
+router.delete('activities/:id', activitiesController.deleteActivity);
 
 //Routes for reservations
 router.get('/reservations', reservationsController.getAllReservation);
 router.get('/reservations/:id', reservationsController.getReservationById);
 router.get('/reservations/client/:clientId', reservationsController.getReservationByClientId);
+router.delete('/reservations/:id', reservationsController.deleteReservation);
 
 //Routes for restaurants
 router.get('/restaurants', restaurantsController);
 router.get('/restaurants/:id', restaurantsController.getRestaurantById);
 router.get('/restaurants/reservations', restaurantsController.getRestaurantReservations);
+router.get('/restaurants/:id', restaurantsController.deleteRestaurant);
 
 // POST to add a new activity
 router.post('/', activitiesController.addActivity);
@@ -50,6 +53,5 @@ router.post('/', restaurantsController.addRestaurant);
 
 // PUT to update a restaurant
 router.put('/:id', restaurantsController.updateRestaurant);
-
 
 module.exports = router;

@@ -1,0 +1,10 @@
+GET http://localhost:3000/clients HTTP/1.1
+
+### 
+GET http://localhost:3000/activities HTTP/1.1
+
+### 
+GET http://localhost:3000/reservations HTTP/1.1
+
+### 
+GET http://localhost:3000/restaurants HTTP/1.1
