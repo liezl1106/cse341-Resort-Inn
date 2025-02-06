@@ -27,8 +27,8 @@ router.delete('/reservations/:id', reservationsController.deleteReservation);
 //Routes for restaurants
 router.get('/restaurants', restaurantsController.getAllRestaurants);
 router.get('/restaurants/:id', restaurantsController.getRestaurantById);
-router.get('/restaurants/reservations', restaurantsController.getRestaurantReservations);
-router.get('/restaurants/:id', restaurantsController.deleteRestaurant);
+//router.get('/restaurants/reservations/clientId', restaurantsController.getRestaurantReservationsByClient);
+router.delete('/restaurants/:id', restaurantsController.deleteRestaurant);
 
 // POST to add a new activity
 router.post('/activities', activitiesController.addActivity);

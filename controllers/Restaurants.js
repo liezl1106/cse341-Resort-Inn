@@ -26,30 +26,43 @@ const getRestaurantById = async (req, res) => {
 };
 
 //get all restaurant reservations
-const getRestaurantReservations = async (req, res) => {
-  const result = await mongodb
-    .getDatabase()
-    .db()
-    .collection('restaurants')
-    .find({ reservations: { $exists: true, $ne: [] } })
-    .project({ restaurantName: 1, reservations: 1 })
-    .toArray();
+// const getRestaurantReservationsByClient = async (req, res) => {
+//   const clientId = req.params.clientId;
+  
+//   const result = await mongodb
+//     .getDatabase()
+//     .db()
+//     .collection('restaurants')
+//     .find({ reservations: { $exists: true, $ne: [] } })
+//     .project({ restaurantName: 1, reservations: 1 })
+//     .toArray();
 
-  res.setHeader('Content-Type', 'application/json');
-  res.status(200).json(result);
-};
+//   const filteredReservations = result.map(item =>{
+//     const clientReservations = item.reservations.filter(reservation => reservation.clientId === clientId);
+//     return clientReservations.length > 0 ? { restaurantName: item.restaurantName, reservations: clientReservations } : null;
+//   }).filter(entry=> entry !== null);
+
+//   res.setHeader('Content-Type', 'application/json');
+
+//   if (filteredReservations.length === 0) {
+//     res.status(404).json({ message: 'No reservations found for this client.'});
+//   } else {
+//     res.status(200).json(result);
+//   }
+
+// };
 
 // Add a new restaurant
 const addRestaurant = async (req, res) => {
   try {
-    const { clientId, restaurantName, cuisineType, menu, reservations, location } = req.body;
+    const {  restaurantName, cuisineType, menu, reservations, location } = req.body;
 
-    if (!clientId || !restaurantName || !cuisineType || !menu || !reservations || !location) {
+    if ( !restaurantName || !cuisineType || !menu || !reservations || !location) {
       return res.status(400).json({ error: 'All fields are required.' });
     }
 
     //format menu
-    const formattedMenu = menubar.map((item) => ({
+    const formattedMenu = menu.map((item) => ({
       itemName: item.itemName,
       price: Number(item.price),
       dietaryInfo: Array.isArray(item.dietaryInfo) ? item.dietaryInfo : []
@@ -65,7 +78,7 @@ const addRestaurant = async (req, res) => {
       : [];
 
     const restaurantData = {
-      clientId: new ObjectId(clientId),
+      //clientId: new ObjectId(clientId),
       restaurantName,
       cuisineType,
       menu: formattedMenu,
@@ -116,7 +129,7 @@ const updateRestaurant = async (req, res) => {
       }));
     }
     if (location) updateData.location = location;
-    if (paymentStatus) updateData.paymentStatus = paymentStatus;
+    //if (paymentStatus) updateData.paymentStatus = paymentStatus;
 
     const result = await mongodb
       .getDatabase()
@@ -154,7 +167,7 @@ const deleteRestaurant = async (req, res) => {
 module.exports = {
   getAllRestaurants,
   getRestaurantById,
-  getRestaurantReservations,
+  //getRestaurantReservationsByClient,
   addRestaurant,
   updateRestaurant,
   deleteRestaurant
