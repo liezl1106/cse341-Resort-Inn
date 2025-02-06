@@ -31,7 +31,7 @@ router.get('/restaurants/reservations', restaurantsController.getRestaurantReser
 router.get('/restaurants/:id', restaurantsController.deleteRestaurant);
 
 // POST to add a new activity
-router.post('/activities/', activitiesController.addActivity);
+router.post('/activities', activitiesController.addActivity);
 
 // PUT to update an activity
 router.put('/activities/:id', activitiesController.updateActivity);

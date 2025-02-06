@@ -82,7 +82,7 @@ Content-Type: application/json
 }
 
 ### Put Activity (Update) 
-PUT http://localhost:3000/activity/67a41d519f77038705f3a804 HTTP/1.1 
+PUT http://localhost:3000/activities/67a41d519f77038705f3a804 HTTP/1.1 
 Content-Type: application/json
 
 {
@@ -104,7 +104,7 @@ Content-Type: application/json
 }
 
 ### Delete Contact 
-DELETE http://localhost:3000/clients/67a41383692c1f5f27f68175 HTTP/1.1
+DELETE http://localhost:3000/activities/67a41d5d9f77038705f3a809 HTTP/1.1
 
 ### -------------------RESERVATIONS ---------------------------------------
 GET http://localhost:3000/reservations HTTP/1.1
