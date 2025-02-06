@@ -28,16 +28,18 @@ const getActivityById = async (req, res) => {
 const addActivity = async (req, res) => {
   try {
     const { activityName, description, schedule, capacity, price, status } = req.body;
-    const newActivity = new Activity({
+    const newActivity = {
       activityName,
       description,
       schedule,
       capacity,
       price,
       status
-    });
+    };
     await mongodb.getDatabase().db().collection('activities').insertOne(newActivity);
-    res.status(201).json({ message: 'Activity added successfully', activity: newActivity });
+    res
+      .status(201)
+      .json({ message: 'Activity added successfully', ActivityId: newActivity.insertedId });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -48,13 +50,34 @@ const updateActivity = async (req, res) => {
   try {
     const activityId = new ObjectId(req.params.id);
     const { activityName, description, schedule, capacity, price, status } = req.body;
-    const updateActivity = { activityName, description, schedule, capacity, price, status };
+
+    if (
+      !activityName ||
+      !description ||
+      !schedule ||
+      !capacity ||
+      !price ||
+      !status === undefined
+    ) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const updateActivity = {
+      activityName: req.body.activityName,
+      description: req.body.description,
+      schedule: req.body.schedule,
+      day: req.body.schedule.day,
+      time: req.body.schedule.time,
+      capacity: req.body.capacity,
+      price: req.body.price,
+      status: req.body.status
+    };
 
     const result = await mongodb
       .getDatabase()
       .db()
       .collection('activities')
-      .updateOne({ _id: activityId }, { $set: updateActivity });
+      .replaceOne({ _id: activityId }, updateActivity);
 
     if (result.modifiedCount === 0) {
       return res.status(404).json({ message: 'Activity not found or no changes made.' });
