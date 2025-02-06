@@ -4,7 +4,7 @@ const ObjectId = require('mongodb').ObjectId;
 //get all Restaurants
 
 const getAllRestaurants = async (req, res) => {
-  const result = await mongodb.getDatabase().db().collection('Restaurants').find().toArray();
+  const result = await mongodb.getDatabase().db().collection('restaurants').find().toArray();
   res.setHeader('Content-Type', 'application/json');
   res.status(200).json(result);
 };
@@ -15,7 +15,7 @@ const getRestaurantById = async (req, res) => {
   const result = await mongodb
     .getDatabase()
     .db()
-    .collection('Restaurants')
+    .collection('restaurants')
     .findOne({ _id: restaurantId });
   if (result) {
     res.setHeader('Content-Type', 'application/json');
@@ -30,7 +30,7 @@ const getRestaurantReservations = async (req, res) => {
   const result = await mongodb
     .getDatabase()
     .db()
-    .collection('Restaurants')
+    .collection('restaurants')
     .find({ reservations: { $exists: true, $ne: [] } })
     .project({ restaurantName: 1, reservations: 1 })
     .toArray();
@@ -76,7 +76,7 @@ const addRestaurant = async (req, res) => {
     const result = await mongodb
       .getDatabase()
       .db()
-      .collection('Restaurants')
+      .collection('restaurants')
       .insertOne(restaurantData);
     res
       .status(201)
@@ -121,7 +121,7 @@ const updateRestaurant = async (req, res) => {
     const result = await mongodb
       .getDatabase()
       .db()
-      .collection('Restaurants')
+      .collection('restaurants')
       .updateOne({ _id: restaurantId }, { $set: updateData });
 
     if (result.matchedCount === 0) {
@@ -140,7 +140,7 @@ const deleteRestaurant = async (req, res) => {
   }
   const restaurantId = new ObjectId(req.params.id);
   const response = await mongodb
-    .getDb()
+    .getDatabase()
     .db()
     .collection('restaurants')
     .deleteOne({ _id: restaurantId });

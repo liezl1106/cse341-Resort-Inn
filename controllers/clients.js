@@ -3,7 +3,7 @@ const ObjectId = require('mongodb').ObjectId;
 
 //get all clients
 const getClients = async (req, res) => {
-  const result = await mongodb.getDatabase().db().collection('clients').find().toArray();
+  const result = await mongodb.getDatabase().db().collection('clients').find();
   result.toArray().then((clients) => {
     res.setHeader('Content-Type', 'application/json');
     res.status(200).json(clients);
@@ -13,7 +13,7 @@ const getClients = async (req, res) => {
 //get Single Clients
 const getClientsById = async (req, res) => {
   const clientId = new ObjectId(req.params.id);
-  const result = await mongodb.getDatabase().db().collection('clients').findOne({ _id: clientId });
+  const result = await mongodb.getDatabase().db().collection('clients').find({ _id: clientId });
   result.toArray().then((users) => {
     res.setHeader('Content-Type', 'application/json');
     res.status(200).json(users[0]);
@@ -77,23 +77,22 @@ const updateClient = async (req, res) => {
     }
 
     const updateData = {
-      name,
-      phone,
-      email,
-      address,
-      membershipLevel,
-      preferences: {
-        roomType: preferences.roomType,
-        dietaryRestrictions: preferences.dietaryRestrictions,
-        preferredActivities: preferences.preferredActivities
-      }
+      name: req.body.name,
+      phone: req.body.phone,
+      email: req.body.email,
+      address: req.body.address,
+      membershipLevel: req.body.membershipLevel,
+      preferences: req.body.preferences,
+      roomType: req.body.preferences.roomType,
+      dietaryRestrictions: req.body.preferences.dietaryRestrictions,
+      preferredActivities: req.body.preferences.preferredActivities
     };
 
     const result = await mongodb
       .getDatabase()
       .db()
       .collection('clients')
-      .updateOne({ _id: clientId }, { $set: updateData });
+      .replaceOne({ _id: clientId }, updateData);
 
     if (result.matchedCount === 0) {
       return res.status(404).json({ error: 'Client not found' });
@@ -110,7 +109,11 @@ const deleteClient = async (req, res) => {
     res.status(400).json('Must use a valid client id to delete');
   }
   const clientId = new ObjectId(req.params.id);
-  const response = await mongodb.getDb().db().collection('clients').deleteOne({ _id: clientId });
+  const response = await mongodb
+    .getDatabase()
+    .db()
+    .collection('clients')
+    .deleteOne({ _id: clientId });
   if (response.deletedCount > 0) {
     res.status(204).send();
   } else {

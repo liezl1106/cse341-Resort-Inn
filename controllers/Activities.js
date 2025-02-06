@@ -3,7 +3,7 @@ const ObjectId = require('mongodb').ObjectId;
 
 //get all Activities
 const getAllActivities = async (req, res) => {
-  const result = await mongodb.getDatabase().db().collection('Activities').find().toArray();
+  const result = await mongodb.getDatabase().db().collection('activities').find().toArray();
   res.setHeader('Content-Type', 'application/json');
   res.status(200).json(result);
 };
@@ -14,7 +14,7 @@ const getActivityById = async (req, res) => {
   const result = await mongodb
     .getDatabase()
     .db()
-    .collection('Activities')
+    .collection('activities')
     .findOne({ _id: activitiesId });
   if (result) {
     res.setHeader('Content-Type', 'application/json');
@@ -53,7 +53,7 @@ const updateActivity = async (req, res) => {
     const result = await mongodb
       .getDatabase()
       .db()
-      .collection('Activities')
+      .collection('activities')
       .updateOne({ _id: activityId }, { $set: updateActivity });
 
     if (result.modifiedCount === 0) {
@@ -70,7 +70,7 @@ const deleteActivity = async (req, res) => {
   }
   const activityId = new ObjectId(req.params.id);
   const response = await mongodb
-    .getDb()
+    .getDatabase()
     .db()
     .collection('activities')
     .deleteOne({ _id: activityId });

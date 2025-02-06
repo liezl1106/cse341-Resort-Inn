@@ -3,7 +3,7 @@ const ObjectId = require('mongodb').ObjectId;
 
 //get all Reservations
 const getAllReservation = async (req, res) => {
-  const result = await mongodb.getDatabase().db().collection('Reservations').find().toArray();
+  const result = await mongodb.getDatabase().db().collection('reservations').find().toArray();
   res.setHeader('Content-Type', 'application/json');
   res.status(200).json(result);
 };
@@ -14,7 +14,7 @@ const getReservationById = async (req, res) => {
   const result = await mongodb
     .getDatabase()
     .db()
-    .collection('Reservations')
+    .collection('reservations')
     .findOne({ _id: reservationsId });
   if (result) {
     res.setHeader('Content-Type', 'application/json');
@@ -30,7 +30,7 @@ const getReservationByClientId = async (req, res) => {
   const result = await mongodb
     .getDatabase()
     .db()
-    .collection('Reservations')
+    .collection('reservations')
     .find({ clientId })
     .toArray();
 
@@ -69,7 +69,7 @@ const addReservation = async (req, res) => {
     const result = await mongodb
       .getDatabase()
       .db()
-      .collection('Reservations')
+      .collection('reservations')
       .insertOne(reservationData);
     res
       .status(201)
@@ -112,7 +112,7 @@ const updateReservation = async (req, res) => {
     const result = await mongodb
       .getDatabase()
       .db()
-      .collection('Reservations')
+      .collection('reservations')
       .updateOne({ _id: reservationId }, { $set: updateData });
 
     if (result.matchedCount === 0) {
@@ -133,7 +133,7 @@ const deleteReservation = async (req, res) => {
   }
   const reservationId = new ObjectId(req.params.id);
   const response = await mongodb
-    .getDb()
+    .getDatabase()
     .db()
     .collection('reservations')
     .deleteOne({ _id: reservationId });
