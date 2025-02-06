@@ -16,7 +16,7 @@ router.delete('/clients/:id', clientsController.deleteClient);
 //Routes for activities
 router.get('/activities', activitiesController.getAllActivities);
 router.get('/activities/:id', activitiesController.getActivityById);
-router.delete('activities/:id', activitiesController.deleteActivity);
+router.delete('/activities/:id', activitiesController.deleteActivity);
 
 //Routes for reservations
 router.get('/reservations', reservationsController.getAllReservation);

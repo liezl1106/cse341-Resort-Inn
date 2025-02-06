@@ -56,8 +56,13 @@ const addReservation = async (req, res) => {
       return res.status(400).json({ error: 'All fields are required.' });
     }
 
+    if (!ObjectId.isValid(clientId)) {
+      return res.status(400).json({ error: 'Invalid clientId format.' });
+    }
+    const clientObjectId = new ObjectId(clientId);
+
     const reservationData = {
-      clientId: new ObjectId(clientId),
+      clientId: clientObjectId,
       roomType,
       checkInDate: new Date(checkInDate),
       checkOutDate: new Date(checkOutDate),
