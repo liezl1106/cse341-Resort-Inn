@@ -32,7 +32,7 @@ PUT http://localhost:3000/clients/67a411e73f4076a8ed85af71 HTTP/1.1
 Content-Type: application/json
 
 {
-    "name": "Juan Gray",
+    "name": "Juan Gray II",
     "phone": "+1234567890",
     "email": "johndenver@example.com",
     "address": "123 Main St, Miami, FL",
@@ -82,11 +82,11 @@ Content-Type: application/json
 }
 
 ### Put Activity (Update) 
-PUT http://localhost:3000/activities/67a41d519f77038705f3a804 HTTP/1.1 
+PUT http://localhost:3000/activities/67a41d5c9f77038705f3a808 HTTP/1.1 
 Content-Type: application/json
 
 {
-  "activityName": "Kayaking Update test",
+  "activityName": "Kayaking Update test VII",
   "description": "Enjoy a guided snorkling experience.",
   "schedule": [
     {
@@ -103,11 +103,51 @@ Content-Type: application/json
   "status": "Available"
 }
 
-### Delete Contact 
-DELETE http://localhost:3000/activities/67a41d5d9f77038705f3a809 HTTP/1.1
+### Delete Activity 
+DELETE http://localhost:3000/activities/67a41d569f77038705f3a806 HTTP/1.1
 
 ### -------------------RESERVATIONS ---------------------------------------
 GET http://localhost:3000/reservations HTTP/1.1
+
+
+###Get Reservation by ID
+GET http://localhost:3000/reservations/67a434f09fd8cc505f33209f HTTP/1.1
+
+###Get Reservation by ClientID
+GET http://localhost:3000/reservations/client/65a2bcdef123456789abcdef0 HTTP/1.1
+
+###POST a new reservation
+POST http://localhost:3000/reservations HTTP/1.1
+Content-Type: application/json
+
+{
+  "clientId": "67a039adff3be0e09fe540b8",
+  "roomType": "Single Suite",
+  "checkInDate": "2025-08-10T14:00:00Z",
+  "checkOutDate": "2025-09-20T11:00:00Z",
+  "status": "Confirmed",
+  "totalPrice": 2000.00,
+  "paymentStatus": "Paid"
+}
+
+###Modify a new reservation
+
+PUT http://localhost:3000/reservations/67a434f09fd8cc505f33209f HTTP/1.1
+Content-Type: application/json
+
+{
+  "clientId": "67a039adff3be0e09fe540b8",
+  "roomType": "Deluxe Suite",
+  "checkInDate": "2025-08-10T14:00:00Z",
+  "checkOutDate": "2025-09-20T11:00:00Z",
+  "status": "Confirmed",
+  "totalPrice": 2500.00,
+  "paymentStatus": "Paid"
+}
+
+###Delete a reservation
+
+DELETE http://localhost:3000/reservations/67a436b19fd8cc505f3320a0 HTTP/1.1
 
 ### -------------------RESTAURANTS ---------------------------------------
 

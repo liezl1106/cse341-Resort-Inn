@@ -82,6 +82,7 @@ const updateActivity = async (req, res) => {
     if (result.modifiedCount === 0) {
       return res.status(404).json({ message: 'Activity not found or no changes made.' });
     }
+    res.status(201).json({ message: 'Activity updated successfully' });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
