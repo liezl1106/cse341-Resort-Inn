@@ -3,6 +3,7 @@ const ObjectId = require('mongodb').ObjectId;
 
 //get all Activities
 const getAllActivities = async (req, res) => {
+  //#swagger.tags=['activities']
   const result = await mongodb.getDatabase().db().collection('activities').find().toArray();
   res.setHeader('Content-Type', 'application/json');
   res.status(200).json(result);
@@ -10,6 +11,7 @@ const getAllActivities = async (req, res) => {
 
 //get Activity By Id
 const getActivityById = async (req, res) => {
+  //#swagger.tags=['activities']
   const activitiesId = new ObjectId(req.params.id);
   const result = await mongodb
     .getDatabase()
@@ -26,6 +28,7 @@ const getActivityById = async (req, res) => {
 
 // Add a new activity
 const addActivity = async (req, res) => {
+  //#swagger.tags=['activities']
   try {
     const { activityName, description, schedule, capacity, price, status } = req.body;
     const newActivity = {
@@ -47,6 +50,7 @@ const addActivity = async (req, res) => {
 
 // Update an activity
 const updateActivity = async (req, res) => {
+  //#swagger.tags=['activities']
   try {
     const activityId = new ObjectId(req.params.id);
     const { activityName, description, schedule, capacity, price, status } = req.body;
@@ -89,6 +93,7 @@ const updateActivity = async (req, res) => {
 };
 
 const deleteActivity = async (req, res) => {
+  //#swagger.tags=['activities']
   if (!ObjectId.isValid(req.params.id)) {
     res.status(400).json('Must use a valid activity id to delete an activity');
   }

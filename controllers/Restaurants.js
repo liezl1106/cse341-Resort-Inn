@@ -4,6 +4,7 @@ const ObjectId = require('mongodb').ObjectId;
 //get all Restaurants
 
 const getAllRestaurants = async (req, res) => {
+  //#swagger.tags=['restaurants']
   const result = await mongodb.getDatabase().db().collection('restaurants').find().toArray();
   res.setHeader('Content-Type', 'application/json');
   res.status(200).json(result);
@@ -11,6 +12,7 @@ const getAllRestaurants = async (req, res) => {
 
 //get Restaurants by ID
 const getRestaurantById = async (req, res) => {
+  //#swagger.tags=['restaurants']
   const restaurantId = new ObjectId(req.params.id);
   const result = await mongodb
     .getDatabase()
@@ -28,7 +30,7 @@ const getRestaurantById = async (req, res) => {
 //get all restaurant reservations
 // const getRestaurantReservationsByClient = async (req, res) => {
 //   const clientId = req.params.clientId;
-  
+
 //   const result = await mongodb
 //     .getDatabase()
 //     .db()
@@ -54,10 +56,11 @@ const getRestaurantById = async (req, res) => {
 
 // Add a new restaurant
 const addRestaurant = async (req, res) => {
+  //#swagger.tags=['restaurants']
   try {
-    const {  restaurantName, cuisineType, menu, reservations, location } = req.body;
+    const { restaurantName, cuisineType, menu, reservations, location } = req.body;
 
-    if ( !restaurantName || !cuisineType || !menu || !reservations || !location) {
+    if (!restaurantName || !cuisineType || !menu || !reservations || !location) {
       return res.status(400).json({ error: 'All fields are required.' });
     }
 
@@ -101,6 +104,7 @@ const addRestaurant = async (req, res) => {
 
 // Update a restaurant
 const updateRestaurant = async (req, res) => {
+  //#swagger.tags=['restaurants']
   try {
     const restaurantId = new ObjectId(req.params.id);
     const { clientId, restaurantName, cuisineType, menu, reservations, location } = req.body;
@@ -148,6 +152,7 @@ const updateRestaurant = async (req, res) => {
 };
 
 const deleteRestaurant = async (req, res) => {
+  //#swagger.tags=['restaurants']
   if (!ObjectId.isValid(req.params.id)) {
     res.status(400).json('Must use a valid reservation id to delete it');
   }

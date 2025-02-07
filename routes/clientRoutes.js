@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
+//swagger
+router.use('/', require('./swagger'));
+
 //controllers for collections
 const clientsController = require('../controllers/clients');
 const activitiesController = require('../controllers/Activities');

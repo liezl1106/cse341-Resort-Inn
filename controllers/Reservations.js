@@ -3,6 +3,7 @@ const ObjectId = require('mongodb').ObjectId;
 
 //get all Reservations
 const getAllReservation = async (req, res) => {
+  //#swagger.tags=['reservations']
   const result = await mongodb.getDatabase().db().collection('reservations').find().toArray();
   res.setHeader('Content-Type', 'application/json');
   res.status(200).json(result);
@@ -10,6 +11,7 @@ const getAllReservation = async (req, res) => {
 
 //get Reservation by Id
 const getReservationById = async (req, res) => {
+   //#swagger.tags=['reservations']
   const reservationsId = new ObjectId(req.params.id);
   const result = await mongodb
     .getDatabase()
@@ -26,6 +28,7 @@ const getReservationById = async (req, res) => {
 
 //get reservation by client ID
 const getReservationByClientId = async (req, res) => {
+   //#swagger.tags=['reservations']
   const clientId = req.params.clientId;
   const result = await mongodb
     .getDatabase()
@@ -40,6 +43,7 @@ const getReservationByClientId = async (req, res) => {
 
 // Add a new reservation
 const addReservation = async (req, res) => {
+   //#swagger.tags=['reservations']
   try {
     const { clientId, roomType, checkInDate, checkOutDate, status, totalPrice, paymentStatus } =
       req.body;
@@ -86,6 +90,7 @@ const addReservation = async (req, res) => {
 
 // Update a reservation
 const updateReservation = async (req, res) => {
+   //#swagger.tags=['reservations']
   try {
     const reservationId = new ObjectId(req.params.id);
     const { clientId, roomType, checkInDate, checkOutDate, status, totalPrice, paymentStatus } =
@@ -133,6 +138,7 @@ const updateReservation = async (req, res) => {
 //Delete reservation
 
 const deleteReservation = async (req, res) => {
+   //#swagger.tags=['reservations']
   if (!ObjectId.isValid(req.params.id)) {
     res.status(400).json('Must use a valid reservation id to delete it');
   }

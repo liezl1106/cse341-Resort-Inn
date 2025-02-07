@@ -3,6 +3,7 @@ const ObjectId = require('mongodb').ObjectId;
 
 //get all clients
 const getClients = async (req, res) => {
+  //#swagger.tags=['clients']
   const result = await mongodb.getDatabase().db().collection('clients').find();
   result.toArray().then((clients) => {
     res.setHeader('Content-Type', 'application/json');
@@ -12,6 +13,7 @@ const getClients = async (req, res) => {
 
 //get Single Clients
 const getClientsById = async (req, res) => {
+  //#swagger.tags=['clients']
   const clientId = new ObjectId(req.params.id);
   const result = await mongodb.getDatabase().db().collection('clients').find({ _id: clientId });
   result.toArray().then((users) => {
@@ -22,6 +24,7 @@ const getClientsById = async (req, res) => {
 
 // Add a new client
 const addClient = async (req, res) => {
+  //#swagger.tags=['clients']
   try {
     const { name, phone, email, address, membershipLevel, preferences, loyaltyPoints } = req.body;
 
@@ -60,6 +63,7 @@ const addClient = async (req, res) => {
 
 // Update a client
 const updateClient = async (req, res) => {
+  //#swagger.tags=['clients']
   try {
     const clientId = new ObjectId(req.params.id);
     const { name, phone, email, address, membershipLevel, preferences, loyaltyPoints } = req.body;
@@ -105,6 +109,7 @@ const updateClient = async (req, res) => {
 };
 
 const deleteClient = async (req, res) => {
+  //#swagger.tags=['clients']
   if (!ObjectId.isValid(req.params.id)) {
     res.status(400).json('Must use a valid client id to delete');
   }
