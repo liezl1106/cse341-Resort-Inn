@@ -2,16 +2,11 @@ const express = require('express');
 const mongodb = require('./data/connect');
 const bodyParser = require('body-parser');
 const app = express();
-
 const port = process.env.PORT || 3000;
 
 app.get('/', (req, res) => {
   res.send('Hello');
 });
-
-// app.listen(process.env.PORT || 3000, () => {
-//   console.log('Web Server is listening at port ' + (process.env.PORT || 3000));
-// });
 
 app.use(bodyParser.json());
 
@@ -26,6 +21,16 @@ app.use((req, res, next) => {
 });
 
 app.use('/', require('./routes/clientRoutes'));
+
+
+// Error handling middleware for other errors
+app.use((err, req, res, next) => {
+  console.log(err.message);
+  return res.status(500).json({
+    status: 500,
+    message: 'Internal Server Error',
+  });
+});
 
 mongodb.initDb((err) => {
   if (err) {
