@@ -3,13 +3,18 @@ const ObjectId = require('mongodb').ObjectId;
 
 //get all Activities
 const getAllActivities = async (req, res) => {
+  try{
   const result = await mongodb.getDatabase().db().collection('activities').find().toArray();
   res.setHeader('Content-Type', 'application/json');
   res.status(200).json(result);
+  } catch {
+    res.status(500).json({message: 'Error fetching activities', error: error.message});
+  }
 };
 
 //get Activity By Id
 const getActivityById = async (req, res) => {
+  try {
   const activitiesId = new ObjectId(req.params.id);
   const result = await mongodb
     .getDatabase()
@@ -22,6 +27,9 @@ const getActivityById = async (req, res) => {
   } else {
     res.status(404).json({ error: 'Activity not found.' });
   }
+} catch {
+  res.status(500).json({message: 'Error fetching activity', error: error.message});
+}
 };
 
 // Add a new activity
@@ -89,6 +97,7 @@ const updateActivity = async (req, res) => {
 };
 
 const deleteActivity = async (req, res) => {
+  try {
   if (!ObjectId.isValid(req.params.id)) {
     res.status(400).json('Must use a valid activity id to delete an activity');
   }
@@ -103,6 +112,9 @@ const deleteActivity = async (req, res) => {
   } else {
     res.status(500).json(response.error || 'Some error ocurred while deleting the activity');
   }
+} catch {
+  res.status(500).json({message: 'Error deleting activity', error: error.message});
+}
 };
 
 module.exports = {
