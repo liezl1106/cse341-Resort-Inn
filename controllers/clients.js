@@ -14,6 +14,7 @@ const getClients = async (req, res) => {
 //get Single Clients
 const getClientsById = async (req, res) => {
   //#swagger.tags=['clients']
+  console.log('Controller - ID from params:', req.params.id);
   const clientId = new ObjectId(req.params.id);
   const result = await mongodb.getDatabase().db().collection('clients').find({ _id: clientId });
   result.toArray().then((users) => {
@@ -21,6 +22,7 @@ const getClientsById = async (req, res) => {
     res.status(200).json(users[0]);
   });
 };
+
 
 // Add a new client
 const addClient = async (req, res) => {
