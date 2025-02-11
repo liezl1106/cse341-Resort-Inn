@@ -21,6 +21,23 @@ function handleValidationErrors(err, req, res, next) {
   return next(err);
 }
 
+const errorHandler = (err, req, res, next) => {
+  console.error(err.stack);
+
+  if (err instanceof ValidationError) {
+    return res.status(400).json({
+      status: 400,
+      message: 'Validation Error',
+      details: err.details.map(detail => detail.message)
+    });
+  }
+
+  res.status(err.status || 500).json({
+    status: err.status || 500,
+    message: err.message || 'Internal Server Error'
+  });
+};
+
 module.exports = {
-    handleValidationErrors
+    handleValidationErrors, errorHandler
 }
