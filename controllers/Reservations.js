@@ -3,13 +3,18 @@ const ObjectId = require('mongodb').ObjectId;
 
 //get all Reservations
 const getAllReservation = async (req, res) => {
+  try {
   const result = await mongodb.getDatabase().db().collection('reservations').find().toArray();
   res.setHeader('Content-Type', 'application/json');
   res.status(200).json(result);
+  } catch {
+    res.status(500).json({error: 'Failed to fetch reservations', details: error.message});
+  }
 };
 
 //get Reservation by Id
 const getReservationById = async (req, res) => {
+  try {
   const reservationsId = new ObjectId(req.params.id);
   const result = await mongodb
     .getDatabase()
@@ -22,6 +27,9 @@ const getReservationById = async (req, res) => {
   } else {
     res.status(404).json({ error: 'Reservation not found.' });
   }
+} catch {
+  res.status(500).json({error: 'Failed to fetch reservation', details: error.message});
+}
 };
 
 //get reservation by client ID
@@ -133,6 +141,7 @@ const updateReservation = async (req, res) => {
 //Delete reservation
 
 const deleteReservation = async (req, res) => {
+  try {
   if (!ObjectId.isValid(req.params.id)) {
     res.status(400).json('Must use a valid reservation id to delete it');
   }
@@ -147,6 +156,9 @@ const deleteReservation = async (req, res) => {
   } else {
     res.status(500).json(response.error || 'Some error ocurred while deleting the reservation');
   }
+}  catch{
+  res.status(500).json({error: 'Failed to delete reservation', details: error.message});
+}
 };
 
 module.exports = {
