@@ -1,10 +1,10 @@
-const _joi = require('joi');
+const Joi = require('joi');
 
 const joiValidation = (schema) => {
-  return async (req, res, next) => {
-    const { error, value } = _joi.validate(req.body, schema);
+  return (req, res, next) => {
+    const { error, value } = schema.validate(req.body, {abortEarly: false});
     if (error) {
-      return next({ status: 400, message: error.message });
+        return res.status(400).json({error: error.details.map(detail => detail.message)});    
     }
     req.body = value;
     next();
