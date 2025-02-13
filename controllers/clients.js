@@ -4,16 +4,21 @@ const ObjectId = require('mongodb').ObjectId;
 //get all clients
 const getClients = async (req, res) => {
   //#swagger.tags=['clients']
+  try {
   const result = await mongodb.getDatabase().db().collection('clients').find();
   result.toArray().then((clients) => {
     res.setHeader('Content-Type', 'application/json');
     res.status(200).json(clients);
   });
+} catch {
+  res.status(500).json({error: 'Failed to fech clients', details: error.message});
+}
 };
 
 //get Single Clients
 const getClientsById = async (req, res) => {
   //#swagger.tags=['clients']
+  try {
   console.log('Controller - ID from params:', req.params.id);
   const clientId = new ObjectId(req.params.id);
   const result = await mongodb.getDatabase().db().collection('clients').find({ _id: clientId });
@@ -21,6 +26,9 @@ const getClientsById = async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.status(200).json(users[0]);
   });
+} catch {
+  res.status(500).json({error: 'Failed to fetch client', details: error.message});
+}
 };
 
 
@@ -112,6 +120,7 @@ const updateClient = async (req, res) => {
 
 const deleteClient = async (req, res) => {
   //#swagger.tags=['clients']
+  try {
   if (!ObjectId.isValid(req.params.id)) {
     res.status(400).json('Must use a valid client id to delete');
   }
@@ -126,6 +135,9 @@ const deleteClient = async (req, res) => {
   } else {
     res.status(500).json(response.error || 'Some error ocurred while deleting the client');
   }
+} catch {
+  res.status(500).json({error: 'Failed to delete Client', details: error.message});
+}
 };
 
 module.exports = {

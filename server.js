@@ -1,7 +1,11 @@
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
+<<<<<<< HEAD
 // const passport = require('./config/passport');
+=======
+const passport = require('./config/passport');
+>>>>>>> 2a65e62536e3077c9f5e8da29e2bb28b6ddc0862
 const mongodb = require('./data/connect');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -15,9 +19,13 @@ const GitHubStrategy = require('passport-github2').Strategy;
 // });
 
 app.use(bodyParser.json());
+<<<<<<< HEAD
 app.use(session({ secret: 'your_secret_key', 
   resave: false, 
   saveUninitialized: true }));
+=======
+app.use(session({ secret: 'your_secret_key', resave: false, saveUninitialized: false }));
+>>>>>>> 2a65e62536e3077c9f5e8da29e2bb28b6ddc0862
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -32,6 +40,7 @@ app.use(passport.session());
 // });
 app.use(cors());
 app.use('/', require('./routes/clientRoutes'));
+<<<<<<< HEAD
 
 // GitHub OAuth routes
 app.get('/auth/github',
@@ -85,6 +94,28 @@ passport.use(new GitHubStrategy({
 }
 ));
 
+=======
+>>>>>>> 2a65e62536e3077c9f5e8da29e2bb28b6ddc0862
+
+// GitHub OAuth routes
+app.get('/auth/github',
+  passport.authenticate('github', { scope: ['user:email'] })
+);
+
+app.get('/auth/github/callback', 
+  passport.authenticate('github', { failureRedirect: '/' }),
+  (req, res) => {
+    // Successful authentication, redirect home.
+    res.redirect('/');
+  }
+);
+
+app.get('/logout', (req, res) => {
+  req.logout((err) => {
+    if (err) { return next(err); }
+    res.redirect('/');
+  });
+});
 
 
 // Error handling middleware for other errors

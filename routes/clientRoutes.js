@@ -6,6 +6,8 @@ const passport = require('passport');
 
 
 
+
+
 // validation
 const { clients, activities, reservations, restaurants } = require('../middlewares/validation_schema');
 
@@ -24,6 +26,7 @@ const restaurantsController = require('../controllers/Restaurants');
 //Routes for clients
 
 // Routes for clients
+<<<<<<< HEAD
 router.get('/clients', joiValidation(clients.getAll), clientsController.getClients);
 router.get('/clients/:id',  joiValidation(clients.getOne), clientsController.getClientsById);
 router.delete('/clients/:id',  joiValidation(clients.deleteOne), clientsController.deleteClient);
@@ -43,8 +46,29 @@ router.delete('/reservations/:id',  joiValidation(reservations.deleteOne), reser
 // Routes for restaurants
 router.get('/restaurants',  joiValidation(restaurants.getAll), restaurantsController.getAllRestaurants);
 router.get('/restaurants/:id', joiValidation(restaurants.getOne), restaurantsController.getRestaurantById);
+=======
+router.get('/clients', ensureAuthenticated, joiValidation(clients.getAll), clientsController.getClients);
+router.get('/clients/:id', ensureAuthenticated, joiValidation(clients.getOne), clientsController.getClientsById);
+router.delete('/clients/:id', ensureAuthenticated, joiValidation(clients.deleteOne), clientsController.deleteClient);
+
+// Routes for activities
+router.get('/activities', ensureAuthenticated, joiValidation(activities.getAll), activitiesController.getAllActivities);
+router.get('/activities/:id', ensureAuthenticated, joiValidation(activities.getOne), activitiesController.getActivityById);
+router.delete('/activities/:id', ensureAuthenticated, joiValidation(activities.deleteOne), activitiesController.deleteActivity);
+
+// Routes for reservations
+router.get('/reservations', ensureAuthenticated, joiValidation(reservations.getAll), reservationsController.getAllReservation);
+router.get('/reservations/:id', ensureAuthenticated, joiValidation(reservations.getOne), reservationsController.getReservationById);
+router.get('/reservations/client/:clientId', ensureAuthenticated, joiValidation(reservations.getByClientId), reservationsController.getReservationByClientId);
+router.delete('/reservations/:id', ensureAuthenticated, joiValidation(reservations.deleteOne), reservationsController.deleteReservation);
+
+
+// Routes for restaurants
+router.get('/restaurants', ensureAuthenticated, joiValidation(restaurants.getAll), restaurantsController.getAllRestaurants);
+router.get('/restaurants/:id', ensureAuthenticated, joiValidation(restaurants.getOne), restaurantsController.getRestaurantById);
+>>>>>>> 2a65e62536e3077c9f5e8da29e2bb28b6ddc0862
 //router.get('/restaurants/reservations/clientId', restaurants.getReservationsByClientId, restaurantsController.getRestaurantReservationsByClient);
-router.delete('/restaurants/:id', joiValidation(restaurants.deleteOne), restaurantsController.deleteRestaurant);
+router.delete('/restaurants/:id', ensureAuthenticated, joiValidation(restaurants.deleteOne), restaurantsController.deleteRestaurant);
 
 
 // POST to add a new activity
@@ -70,6 +94,7 @@ router.post('/restaurants/', ensureAuthenticated, joiValidation(restaurants.crea
 
 // PUT to update a restaurant
 router.put('/restaurants/:id', ensureAuthenticated, joiValidation(restaurants.updateOne), restaurantsController.updateRestaurant);
+<<<<<<< HEAD
 
 router.get('/login', passport.authenticate('github'), (req, res) => {});
 
@@ -79,6 +104,8 @@ router.get('/logout', (req, res) => {
       res.redirect('/');
     });
   });
+=======
+>>>>>>> 2a65e62536e3077c9f5e8da29e2bb28b6ddc0862
 
 
 module.exports = router;
