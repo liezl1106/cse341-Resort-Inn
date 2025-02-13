@@ -1,19 +1,23 @@
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
-const passport = require('./config/passport');
+// const passport = require('./config/passport');
 const mongodb = require('./data/connect');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
+const passport = require('passport');
+const GitHubStrategy = require('passport-github2').Strategy;
 
-app.get('/', (req, res) => {
-  res.send('Hello');
-});
+// app.get('/', (req, res) => {
+//   res.send('Hello');
+// });
 
 app.use(bodyParser.json());
-app.use(session({ secret: 'your_secret_key', resave: false, saveUninitialized: false }));
+app.use(session({ secret: 'your_secret_key', 
+  resave: false, 
+  saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -34,20 +38,53 @@ app.get('/auth/github',
   passport.authenticate('github', { scope: ['user:email'] })
 );
 
-app.get('/auth/github/callback', 
-  passport.authenticate('github', { failureRedirect: '/' }),
+// app.get('/auth/github/callback', 
+//   passport.authenticate('github', { failureRedirect: '/' }),
+//   (req, res) => {
+//     // Successful authentication, redirect home.
+//     res.redirect('/');
+//   }
+// );
+
+app.get('/', (req, res) => {
+  res.send(
+    req.session.user !== undefined
+      ? `Logged in as ${req.session.user.displayName}`
+      : 'Logged out'
+  );
+});
+
+app.get(
+  '/github/callback',
+  passport.authenticate('github', {
+    failureRedirect: '/api-docs',
+    session: false,
+  }),
   (req, res) => {
-    // Successful authentication, redirect home.
+    req.session.user = req.user;
     res.redirect('/');
   }
 );
 
-app.get('/logout', (req, res) => {
-  req.logout((err) => {
-    if (err) { return next(err); }
-    res.redirect('/');
-  });
+passport.serializeUser((user, done) => {
+  done(null, user);
 });
+
+passport.deserializeUser((obj, done) => {
+  done(null, obj);
+});
+
+passport.use(new GitHubStrategy({
+  clientID: process.env.GITHUB_CLIENT_ID,
+  clientSecret: process.env.GITHUB_CLIENT_SECRET,
+  callbackURL: process.env.CALLBACK_URL
+},
+(accessToken, refreshToken, profile, done) => {
+  console.log('GitHub profile:', profile); // Add this line
+  return done(null, profile);
+}
+));
+
 
 
 // Error handling middleware for other errors

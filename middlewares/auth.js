@@ -1,8 +1,8 @@
 const ensureAuthenticated = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('/auth/github');
+   if (req.session.user === undefined) {
+      return res.status(401).json('You do not have access');
+    }
+    next();
 };
 
 module.exports = ensureAuthenticated;
