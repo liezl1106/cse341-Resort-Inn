@@ -6,6 +6,7 @@ const getClientsSchema = Joi.object({
   query: Joi.object().optional(),
   body: Joi.object().optional()
 }).unknown(true);
+
 const getClientByIdSchema = Joi.object({
   body: Joi.object().optional(),
   query: Joi.object().optional(),

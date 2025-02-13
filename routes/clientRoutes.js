@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
+// validate
 const { joiValidation } = require('../middlewares/joi');
 
-// validation
+// validation schema/rule
 const { clients, activities, reservations, restaurants } = require('../middlewares/validation_schema');
 
 
