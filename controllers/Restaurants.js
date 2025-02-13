@@ -5,14 +5,19 @@ const ObjectId = require('mongodb').ObjectId;
 
 const getAllRestaurants = async (req, res) => {
   //#swagger.tags=['restaurants']
+  try {
   const result = await mongodb.getDatabase().db().collection('restaurants').find().toArray();
   res.setHeader('Content-Type', 'application/json');
   res.status(200).json(result);
+  } catch {
+    res.status(500).json({error: 'Failed to retrieve restaurants', details: error.message});
+  }
 };
 
 //get Restaurants by ID
 const getRestaurantById = async (req, res) => {
   //#swagger.tags=['restaurants']
+  try {
   const restaurantId = new ObjectId(req.params.id);
   const result = await mongodb
     .getDatabase()
@@ -25,6 +30,9 @@ const getRestaurantById = async (req, res) => {
   } else {
     res.status(404).json({ error: 'Restaurant not found.' });
   }
+} catch {
+  res.status(500).json({error: 'Failed to retrieve restaurant', details: error.message});
+}
 };
 
 //get all restaurant reservations
@@ -153,6 +161,7 @@ const updateRestaurant = async (req, res) => {
 
 const deleteRestaurant = async (req, res) => {
   //#swagger.tags=['restaurants']
+  try {
   if (!ObjectId.isValid(req.params.id)) {
     res.status(400).json('Must use a valid reservation id to delete it');
   }
@@ -167,6 +176,9 @@ const deleteRestaurant = async (req, res) => {
   } else {
     res.status(500).json(response.error || 'Some error ocurred while deleting the restaurant');
   }
+} catch {
+  res.status(500).json({error: 'Failed to delete restaurant', details: error.message});
+}
 };
 
 module.exports = {
