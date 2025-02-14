@@ -9,6 +9,8 @@
     "joi": "^17.13.3",
     "mongodb": "^6.13.0",
     "npm": "^11.1.0",
+    "passport": "^0.7.0",
+    "passport-github2": "^0.1.12",
     "swagger-ui-express": "^5.0.1",
     "yaml": "^2.7.0"
   },
@@ -17,7 +19,7 @@
   "description": "cse341 Team Project by Jack Loo, Boluwatife Omotoyinbo, Dehyu DM Cassell, Dereck Romero Moscoso, Liezl Lizardo, Sarah Imarhenakhue Ogiefa",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --detectOpenHandles",
     "start": "nodemon server.js"
   },
   "repository": {
@@ -36,8 +38,10 @@
     "eslint": "^9.19.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.3",
+    "jest": "^29.7.0",
     "nodemon": "^3.1.9",
     "prettier": "^3.4.2",
+    "supertest": "^7.0.0",
     "swagger-autogen": "^2.23.7"
   }
 }
