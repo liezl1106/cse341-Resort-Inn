@@ -57,17 +57,17 @@ const doc = {
   },
   schemes: process.env.NODE_ENV === 'production' ? ['https'] : ['http'],
   
-  // securityDefinitions: {
-  //   oauth2: {
-  //     type: 'oauth2',
-  //     authorizationUrl: 'https://github.com/login/oauth/authorize',
-  //     flow: 'implicit',
-  //     scopes: {
-  //       read: 'Grants read access',
-  //       write: 'Grants write access'
-  //     }
-  //   }
-  // }
+  securityDefinitions: {
+  oauth2: {
+  type: 'oauth2',
+  authorizationUrl: 'https://github.com/login/oauth/authorize',
+  flow: 'implicit',
+  scopes: {
+  read: 'Grants read access',
+  write: 'Grants write access'
+      }
+    }
+  }
 };
 
 const outputFile = './swagger.json';
