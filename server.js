@@ -9,6 +9,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const passport = require('passport');
 const GitHubStrategy = require('passport-github2').Strategy;
+const http = require('http');
 
 // app.get('/', (req, res) => {
 //   res.send('Hello');
@@ -106,6 +107,12 @@ app.get('/logout', (req, res) => {
   });
 });
 
+
+//use of http.createServer to create server and export it
+const server = http.createServer(app);
+
+//export app as server test
+module.exports = server;
 
 // Error handling middleware for other errors
 app.use((err, req, res, next) => {
