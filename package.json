@@ -19,7 +19,7 @@
   "description": "cse341 Team Project by Jack Loo, Boluwatife Omotoyinbo, Dehyu DM Cassell, Dereck Romero Moscoso, Liezl Lizardo, Sarah Imarhenakhue Ogiefa",
   "main": "server.js",
   "scripts": {
-    "test": "jest --detectOpenHandles",
+    "test": "jest",
     "start": "nodemon server.js"
   },
   "repository": {
