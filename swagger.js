@@ -56,7 +56,7 @@ const doc = {
   },
   schemes: process.env.NODE_ENV === 'production' 
     ? ['https'] 
-    : ['http', 'https'],
+    : ['http'],
   securityDefinitions: {
     oauth2: {
       type: 'oauth2',
