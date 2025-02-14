@@ -43,31 +43,31 @@
 // // this will generate swagger.json
 // swaggerAutogen(outputFile, endpointFiles, doc);
 
-const swaggerAutogen = require('swagger-autogen')();
 require('dotenv').config();
+const swaggerAutogen = require('swagger-autogen')();
+
 
 // Set default environment if not set
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+//process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 const doc = {
   info: {
     title: 'Resort Inn API',
     description: 'API documentation for Resort Inn'
   },
-  schemes: process.env.NODE_ENV === 'production' 
-    ? ['https'] 
-    : ['http'],
-  securityDefinitions: {
-    oauth2: {
-      type: 'oauth2',
-      authorizationUrl: 'https://github.com/login/oauth/authorize',
-      flow: 'implicit',
-      scopes: {
-        read: 'Grants read access',
-        write: 'Grants write access'
-      }
-    }
-  }
+  schemes: process.env.NODE_ENV === 'production' ? ['https'] : ['http'],
+  
+  // securityDefinitions: {
+  //   oauth2: {
+  //     type: 'oauth2',
+  //     authorizationUrl: 'https://github.com/login/oauth/authorize',
+  //     flow: 'implicit',
+  //     scopes: {
+  //       read: 'Grants read access',
+  //       write: 'Grants write access'
+  //     }
+  //   }
+  // }
 };
 
 const outputFile = './swagger.json';
