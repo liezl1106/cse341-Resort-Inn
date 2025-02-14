@@ -44,28 +44,19 @@
 // swaggerAutogen(outputFile, endpointFiles, doc);
 
 const swaggerAutogen = require('swagger-autogen')();
+require('dotenv').config();
 
-// Get the environment
-const environment = process.env.NODE_ENV || 'development';
-const port = process.env.PORT || 3000;
-
-// Function to determine the host
-const getHost = () => {
-  if (environment === 'production') {
-    // Use the same host as your callback URL but remove the protocol
-    const callbackUrl = new URL(process.env.CALLBACK_URL);
-    return callbackUrl.host;
-  }
-  return `localhost:${port}`;
-};
+// Set default environment if not set
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 const doc = {
   info: {
     title: 'Resort Inn API',
     description: 'API documentation for Resort Inn'
   },
-  host: getHost(),
-  schemes: environment === 'production' ? ['https'] : ['http', 'https'],
+  schemes: process.env.NODE_ENV === 'production' 
+    ? ['https'] 
+    : ['http', 'https'],
   securityDefinitions: {
     oauth2: {
       type: 'oauth2',
@@ -82,5 +73,12 @@ const doc = {
 const outputFile = './swagger.json';
 const endpointFiles = ['./routes/clientRoutes.js'];
 
-// this will generate swagger.json
-swaggerAutogen(outputFile, endpointFiles, doc);
+console.log('Generating Swagger documentation...');
+swaggerAutogen(outputFile, endpointFiles, doc)
+  .then(() => {
+    console.log('Swagger documentation generated successfully.');
+    console.log('Current environment:', process.env.NODE_ENV);
+  })
+  .catch((err) => {
+    console.error('Error generating Swagger documentation:', err);
+  });
