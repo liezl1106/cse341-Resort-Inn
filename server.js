@@ -90,36 +90,40 @@ app.get('/auth/github',
 //     }
 // );
 
-// Update the GitHub callback route
 app.get('/github/callback',
     passport.authenticate('github', {
         failureRedirect: '/api-docs',
-        session: true, // Change this to true
+        session: true,
     }),
     (req, res) => {
         try {
+            // Set both req.user and req.session.user
             req.session.user = req.user;
-            
-            // Decode the state parameter to get the redirect URL
-            const state = req.query.state;
-            const redirectUrl = state ? 
-                Buffer.from(state, 'base64').toString() : 
-                '/';
+            req.session.save((err) => {
+                if (err) {
+                    console.error('Session save error:', err);
+                    return res.redirect('/api-docs');
+                }
+                
+                const state = req.query.state;
+                const redirectUrl = state ? 
+                    Buffer.from(state, 'base64').toString() : 
+                    '/';
 
-            if (redirectUrl.includes('api-docs/oauth2-redirect.html')) {
-                // Handle Swagger UI redirect
-                const token = req.user.accessToken; // Make sure you're getting the token
-                res.redirect(`${redirectUrl}#access_token=${token}`);
-            } else {
-                // Handle regular app redirect
-                res.redirect(redirectUrl);
-            }
+                if (redirectUrl.includes('api-docs')) {
+                    const token = req.user.accessToken;
+                    res.redirect(`${redirectUrl}#access_token=${token}`);
+                } else {
+                    res.redirect(redirectUrl);
+                }
+            });
         } catch (error) {
             console.error('Callback error:', error);
             res.redirect('/api-docs');
         }
     }
 );
+
 
 app.get('/logout', (req, res, next) => {
     req.logout((err) => {

@@ -67,7 +67,7 @@ const doc = {
         write: 'Grants write access'
       },
       // For Swagger UI authentication
-      redirectUrl: 'https://cse341-resort-inn-ngli.onrender.com/api-docs/oauth2-redirect.html'
+      redirectUrl: 'https://cse341-resort-inn-ngli.onrender.com/api-docs'
     }
   }
 };
