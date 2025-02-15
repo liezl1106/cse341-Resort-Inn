@@ -1,7 +1,5 @@
 node_modules
 .env
-<<<<<<< HEAD
 .vscode
-=======
->>>>>>> origin/main
 settings.json
+.env.test
