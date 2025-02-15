@@ -106,7 +106,7 @@ app.get('/github/callback',
                 Buffer.from(state, 'base64').toString() : 
                 '/';
 
-            if (redirectUrl.includes('api-docs/oauth2-redirect.html')) {
+            if (redirectUrl.includes('api-docs')) {
                 // Handle Swagger UI redirect
                 const token = req.user.accessToken; // Make sure you're getting the token
                 res.redirect(`${redirectUrl}#access_token=${token}`);

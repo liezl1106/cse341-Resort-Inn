@@ -12,7 +12,7 @@ const swaggerDocument = require('../swagger.json');
 require('dotenv').config();
 
 const swaggerUiOptions = {
-  oauth2RedirectUrl: `${process.env.BASE_URL}/api-docs/oauth2-redirect.html`,
+  oauth2RedirectUrl: `${process.env.BASE_URL}/api-docs`,
   oauth: {
     clientId: process.env.GITHUB_CLIENT_ID,
     additionalQueryStringParams: {
