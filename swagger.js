@@ -55,8 +55,11 @@ const doc = {
     title: 'Resort Inn API',
     description: 'API documentation for Resort Inn'
   },
+  // ost: process.env.NODE_ENV === 'production' 
+  //   ? process.env.PROD_HOST 
+  //   : 'localhost:3000',
+  // basePath: '/',
   schemes: process.env.NODE_ENV === 'production' ? ['https'] : ['http'],
-  
   securityDefinitions: {
   oauth2: {
   type: 'oauth2',
