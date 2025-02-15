@@ -55,20 +55,19 @@ const doc = {
     title: 'Resort Inn API',
     description: 'API documentation for Resort Inn'
   },
-  // ost: process.env.NODE_ENV === 'production' 
-  //   ? process.env.PROD_HOST 
-  //   : 'localhost:3000',
-  // basePath: '/',
   schemes: process.env.NODE_ENV === 'production' ? ['https'] : ['http'],
   securityDefinitions: {
-  oauth2: {
-  type: 'oauth2',
-  authorizationUrl: 'https://github.com/login/oauth/authorize',
-  flow: 'implicit',
-  scopes: {
-  read: 'Grants read access',
-  write: 'Grants write access'
-      }
+    oauth2: {
+      type: 'oauth2',
+      authorizationUrl: 'https://github.com/login/oauth/authorize',
+      tokenUrl: 'https://github.com/login/oauth/access_token',
+      flow: 'accessCode',
+      scopes: {
+        read: 'Grants read access',
+        write: 'Grants write access'
+      },
+      // For Swagger UI authentication
+      redirectUrl: 'https://cse341-resort-inn-ngli.onrender.com/api-docs/oauth2-redirect.html'
     }
   }
 };
