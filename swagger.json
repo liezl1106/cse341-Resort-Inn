@@ -5,7 +5,7 @@
     "description": "API documentation for Resort Inn",
     "version": "1.0.0"
   },
- "host": "cse341-resort-inn.onrender.com",
+ "host": "cse341-resort-inn-ngli.onrender.com",
   "basePath": "/",
   "schemes": [
     "https"
@@ -14,11 +14,13 @@
     "oauth2": {
       "type": "oauth2",
       "authorizationUrl": "https://github.com/login/oauth/authorize",
-      "flow": "implicit",
+      "tokenUrl": "https://github.com/login/oauth/access_token",
+      "flow": "accessCode",
       "scopes": {
         "read": "Grants read access",
         "write": "Grants write access"
-      }
+      },
+      "redirectUrl": "https://cse341-resort-inn-ngli.onrender.com/api-docs/oauth2-redirect.html"
     }
   },
   "paths": {
@@ -30,6 +32,18 @@
         "description": "",
         "produces": [
           "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string"
+          }
         ],
         "responses": {
           "200": {
@@ -87,6 +101,9 @@
           "400": {
             "description": "Bad Request"
           },
+          "401": {
+            "description": "Unauthorized"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -117,6 +134,9 @@
           "400": {
             "description": "Bad Request"
           },
+          "404": {
+            "description": "Not Found"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -141,6 +161,9 @@
           },
           "400": {
             "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -196,6 +219,9 @@
           },
           "400": {
             "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "404": {
             "description": "Not Found"
@@ -267,6 +293,9 @@
           },
           "400": {
             "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -323,6 +352,9 @@
           "400": {
             "description": "Bad Request"
           },
+          "404": {
+            "description": "Not Found"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -369,11 +401,14 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": "Created"
+          "200": {
+            "description": "OK"
           },
           "400": {
             "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "404": {
             "description": "Not Found"
@@ -389,6 +424,23 @@
         "description": "",
         "produces": [
           "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "type": "string"
+          }
         ],
         "responses": {
           "200": {
@@ -455,6 +507,9 @@
           "400": {
             "description": "Bad Request"
           },
+          "404": {
+            "description": "Not Found"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -510,6 +565,9 @@
           "400": {
             "description": "Bad Request"
           },
+          "401": {
+            "description": "Unauthorized"
+          },
           "404": {
             "description": "Not Found"
           },
@@ -542,6 +600,9 @@
           },
           "400": {
             "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -620,6 +681,12 @@
           "400": {
             "description": "Bad Request"
           },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -643,9 +710,6 @@
             "schema": {
               "type": "object",
               "properties": {
-                "clientId": {
-                  "example": "any"
-                },
                 "restaurantName": {
                   "example": "any"
                 },
@@ -671,6 +735,9 @@
           },
           "400": {
             "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "404": {
             "description": "Not Found"
@@ -726,6 +793,9 @@
           "400": {
             "description": "Bad Request"
           },
+          "401": {
+            "description": "Unauthorized"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -770,6 +840,9 @@
           },
           "400": {
             "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "500": {
             "description": "Internal Server Error"

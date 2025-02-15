@@ -162,7 +162,7 @@ Content-Type: application/json
 
 {
 
-  "restaurantName": "Testing Restaurant",
+  "restaurantName": "Testing Restaurant II",
   "cuisineType": "Seafood",
   "menu": [
     {
