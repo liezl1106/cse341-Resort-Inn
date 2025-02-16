@@ -57,7 +57,7 @@ app.get('auth/github',
 );
 
 app.get(
-    'auth/github/callback',
+    '/auth/github/callback',
     passport.authenticate('github', {
       failureRedirect: '/api-docs',
       session: false,
