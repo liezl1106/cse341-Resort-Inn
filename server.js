@@ -52,12 +52,12 @@ app.get('/', (req, res) => {
     );
 });
 
-app.get('/github',
+app.get('auth/github',
     passport.authenticate('github', { scope: ['user:email'] })
 );
 
 app.get(
-    '/github/callback',
+    'auth/github/callback',
     passport.authenticate('github', {
       failureRedirect: '/api-docs',
       session: false,
