@@ -46,28 +46,23 @@
 require('dotenv').config();
 const swaggerAutogen = require('swagger-autogen')();
 
-
-// Set default environment if not set
-//process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-
 const doc = {
   info: {
     title: 'Resort Inn API',
     description: 'API documentation for Resort Inn'
   },
   schemes: process.env.NODE_ENV === 'production' ? ['https'] : ['http'],
+
   securityDefinitions: {
     oauth2: {
       type: 'oauth2',
+      // Use 'implicit' so that Swagger doesn't try to do the code exchange
       authorizationUrl: 'https://github.com/login/oauth/authorize',
-      tokenUrl: 'https://github.com/login/oauth/access_token',
-      flow: 'accessCode',
+      flow: 'implicit',
       scopes: {
         read: 'Grants read access',
         write: 'Grants write access'
-      },
-      // For Swagger UI authentication
-      redirectUrl: 'https://cse341-resort-inn-ngli.onrender.com/api-docs'
+      }
     }
   }
 };
@@ -75,11 +70,9 @@ const doc = {
 const outputFile = './swagger.json';
 const endpointFiles = ['./routes/clientRoutes.js'];
 
-console.log('Generating Swagger documentation...');
 swaggerAutogen(outputFile, endpointFiles, doc)
   .then(() => {
     console.log('Swagger documentation generated successfully.');
-    console.log('Current environment:', process.env.NODE_ENV);
   })
   .catch((err) => {
     console.error('Error generating Swagger documentation:', err);

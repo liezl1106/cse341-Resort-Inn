@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     store: MongoStore.create({
         mongoUrl: process.env.MONGODB_URI,
         collectionName: 'sessions',
@@ -29,6 +29,12 @@ app.use(session({
         maxAge: 24 * 60 * 60 * 1000
     }
 }));
+// app.use(session({
+//     secret: process.env.SESSION_SECRET || 'your_secret_key',
+//     resave: false,
+//     saveUninitialized: true
+// }));
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cors());
@@ -92,37 +98,43 @@ app.get('/auth/github',
 
 app.get('/github/callback',
     passport.authenticate('github', {
-        failureRedirect: '/api-docs',
-        session: true,
+      failureRedirect: '/api-docs',
+      session: true,
     }),
     (req, res) => {
-        try {
-            // Set both req.user and req.session.user
-            req.session.user = req.user;
-            req.session.save((err) => {
-                if (err) {
-                    console.error('Session save error:', err);
-                    return res.redirect('/api-docs');
-                }
-                
-                const state = req.query.state;
-                const redirectUrl = state ? 
-                    Buffer.from(state, 'base64').toString() : 
-                    '/';
-
-                if (redirectUrl.includes('api-docs')) {
-                    const token = req.user.accessToken;
-                    res.redirect(`${redirectUrl}#access_token=${token}`);
-                } else {
-                    res.redirect(redirectUrl);
-                }
-            });
-        } catch (error) {
-            console.error('Callback error:', error);
-            res.redirect('/api-docs');
-        }
+      try {
+        req.session.user = req.user;
+        req.session.save((err) => {
+          if (err) {
+            console.error('Session save error:', err);
+            return res.redirect('/api-docs');
+          }
+  
+          // If you'd like to honor a "state" parameter:
+          const state = req.query.state;
+          const decodedState = state 
+            ? Buffer.from(state, 'base64').toString()
+            : '/';
+  
+          // Get GitHub access token from Passport’s user object
+          const token = req.user?.accessToken || '';
+  
+          // If the user was originally heading for /api-docs, 
+          // then we attach ?access_token=token and go straight to /api-docs
+          if (decodedState.includes('api-docs')) {
+            return res.redirect(`/api-docs?access_token=${token}`);
+          } 
+          // Otherwise, just go wherever else is appropriate
+          else {
+            return res.redirect(decodedState);
+          }
+        });
+      } catch (error) {
+        console.error('Callback error:', error);
+        return res.redirect('/api-docs');
+      }
     }
-);
+  );
 
 
 app.get('/logout', (req, res, next) => {
