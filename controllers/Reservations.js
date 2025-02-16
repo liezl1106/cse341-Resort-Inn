@@ -1,86 +1,153 @@
+
 const mongodb = require('../data/connect');
 const ObjectId = require('mongodb').ObjectId;
 
-//get all Reservations
+// Get all Reservations
 const getAllReservation = async (req, res) => {
   //#swagger.tags=['reservations']
   try {
-  const result = await mongodb.getDatabase().db().collection('reservations').find().toArray();
-  res.setHeader('Content-Type', 'application/json');
-  res.status(200).json(result);
-  } catch {
-    res.status(500).json({error: 'Failed to fetch reservations', details: error.message});
-  }
-};
+    const { limit = 10, startDate, endDate } = req.query;
+    const query = {};
 
-//get Reservation by Id
-const getReservationById = async (req, res) => {
-   //#swagger.tags=['reservations']
-   try {
-  const reservationsId = new ObjectId(req.params.id);
-  const result = await mongodb
-    .getDatabase()
-    .db()
-    .collection('reservations')
-    .findOne({ _id: reservationsId });
-  if (result) {
+    // Add date range filtering if provided
+    if (startDate || endDate) {
+      query.checkInDate = {};
+      if (startDate) {
+        query.checkInDate.$gte = new Date(startDate);
+      }
+      if (endDate) {
+        query.checkInDate.$lte = new Date(endDate);
+      }
+    }
+
+    const result = await mongodb
+      .getDatabase()
+      .db()
+      .collection('reservations')
+      .find(query)
+      .limit(Number(limit))
+      .toArray();
+
     res.setHeader('Content-Type', 'application/json');
     res.status(200).json(result);
-  } else {
-    res.status(404).json({ error: 'Reservation not found.' });
+  } catch (error) {
+    console.error('Error fetching reservations:', error);
+    res.status(500).json({
+      error: 'Failed to fetch reservations', 
+      details: error.message
+    });
   }
-} catch {
-  res.status(500).json({error: 'Failed to fetch reservation', details: error.message});
-}
 };
 
-//get reservation by client ID
-const getReservationByClientId = async (req, res) => {
-   //#swagger.tags=['reservations']
-  const clientId = req.params.clientId;
-  const result = await mongodb
-    .getDatabase()
-    .db()
-    .collection('reservations')
-    .find({ clientId })
-    .toArray();
+// Get Reservation by Id
+const getReservationById = async (req, res) => {
+  //#swagger.tags=['reservations']
+  try {
+    if (!ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ 
+        error: 'Invalid reservation ID format' 
+      });
+    }
 
-  res.setHeader('Content-Type', 'application/json');
-  res.status(200).json(result);
+    const reservationsId = new ObjectId(req.params.id);
+    const result = await mongodb
+      .getDatabase()
+      .db()
+      .collection('reservations')
+      .findOne({ _id: reservationsId });
+
+    if (!result) {
+      return res.status(404).json({ 
+        error: 'Reservation not found' 
+      });
+    }
+
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Error fetching reservation:', error);
+    res.status(500).json({
+      error: 'Failed to fetch reservation', 
+      details: error.message
+    });
+  }
+};
+
+// Get reservation by client ID
+const getReservationByClientId = async (req, res) => {
+  //#swagger.tags=['reservations']
+  try {
+    if (!ObjectId.isValid(req.params.clientId)) {
+      return res.status(400).json({ 
+        error: 'Invalid client ID format' 
+      });
+    }
+
+    const clientId = new ObjectId(req.params.clientId);
+    const result = await mongodb
+      .getDatabase()
+      .db()
+      .collection('reservations')
+      .find({ clientId })
+      .toArray();
+
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Error fetching reservations by client:', error);
+    res.status(500).json({
+      error: 'Failed to fetch reservations', 
+      details: error.message
+    });
+  }
 };
 
 // Add a new reservation
 const addReservation = async (req, res) => {
-   //#swagger.tags=['reservations']
+  //#swagger.tags=['reservations']
   try {
-    const { clientId, roomType, checkInDate, checkOutDate, status, totalPrice, paymentStatus } =
-      req.body;
+    const { clientId, roomType, checkInDate, checkOutDate, status, totalPrice, paymentStatus } = req.body;
 
-    if (
-      !clientId ||
-      !roomType ||
-      !checkInDate ||
-      !checkOutDate ||
-      !status ||
-      !totalPrice ||
-      !paymentStatus
-    ) {
-      return res.status(400).json({ error: 'All fields are required.' });
+    // Validate required fields
+    if (!clientId || !roomType || !checkInDate || !checkOutDate || 
+        !status || !totalPrice || !paymentStatus) {
+      return res.status(400).json({ 
+        error: 'All fields are required' 
+      });
     }
 
+    // Validate clientId format
     if (!ObjectId.isValid(clientId)) {
-      return res.status(400).json({ error: 'Invalid clientId format.' });
+      return res.status(400).json({ 
+        error: 'Invalid clientId format' 
+      });
     }
-    const clientObjectId = new ObjectId(clientId);
+
+    // Validate dates
+    const checkIn = new Date(checkInDate);
+    const checkOut = new Date(checkOutDate);
+    
+    if (isNaN(checkIn.getTime()) || isNaN(checkOut.getTime())) {
+      return res.status(400).json({ 
+        error: 'Invalid date format' 
+      });
+    }
+
+    if (checkIn >= checkOut) {
+      return res.status(400).json({ 
+        error: 'Check-out date must be after check-in date' 
+      });
+    }
 
     const reservationData = {
-      clientId: clientObjectId,
+      clientId: new ObjectId(clientId),
       roomType,
-      checkInDate: new Date(checkInDate),
-      checkOutDate: new Date(checkOutDate),
+      checkInDate: checkIn,
+      checkOutDate: checkOut,
       status,
-      totalPrice,
-      paymentStatus
+      totalPrice: Number(totalPrice),
+      paymentStatus,
+      createdAt: new Date()
     };
 
     const result = await mongodb
@@ -88,44 +155,80 @@ const addReservation = async (req, res) => {
       .db()
       .collection('reservations')
       .insertOne(reservationData);
-    res
-      .status(201)
-      .json({ message: 'Reservation added successfully', reservationId: result.insertedId });
+
+    res.status(201).json({ 
+      message: 'Reservation added successfully', 
+      reservationId: result.insertedId 
+    });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to add reservation', details: error.message });
+    console.error('Error adding reservation:', error);
+    res.status(500).json({ 
+      error: 'Failed to add reservation', 
+      details: error.message 
+    });
   }
 };
 
 // Update a reservation
 const updateReservation = async (req, res) => {
-   //#swagger.tags=['reservations']
+  //#swagger.tags=['reservations']
   try {
-    const reservationId = new ObjectId(req.params.id);
-    const { clientId, roomType, checkInDate, checkOutDate, status, totalPrice, paymentStatus } =
-      req.body;
-
-    if (
-      !clientId &&
-      !roomType &&
-      !checkInDate &&
-      !checkOutDate &&
-      !status &&
-      !totalPrice &&
-      !paymentStatus
-    ) {
-      return res.status(400).json({ error: 'At least one field must be provided for update.' });
+    if (!ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ 
+        error: 'Invalid reservation ID format' 
+      });
     }
 
-    //update object
+    const reservationId = new ObjectId(req.params.id);
+    const { clientId, roomType, checkInDate, checkOutDate, status, totalPrice, paymentStatus } = req.body;
+
+    // Validate at least one field is provided
+    if (!clientId && !roomType && !checkInDate && !checkOutDate && 
+        !status && totalPrice === undefined && !paymentStatus) {
+      return res.status(400).json({ 
+        error: 'At least one field must be provided for update' 
+      });
+    }
+
     const updateData = {};
 
-    if (clientId) updateData.clientId = new ObjectId(clientId);
+    // Validate and process each field
+    if (clientId) {
+      if (!ObjectId.isValid(clientId)) {
+        return res.status(400).json({ 
+          error: 'Invalid clientId format' 
+        });
+      }
+      updateData.clientId = new ObjectId(clientId);
+    }
+
     if (roomType) updateData.roomType = roomType;
-    if (checkInDate) updateData.checkInDate = new Date(checkInDate);
-    if (checkOutDate) updateData.checkOutDate = new Date(checkOutDate);
+
+    if (checkInDate) {
+      const checkIn = new Date(checkInDate);
+      if (isNaN(checkIn.getTime())) {
+        return res.status(400).json({ 
+          error: 'Invalid check-in date format' 
+        });
+      }
+      updateData.checkInDate = checkIn;
+    }
+
+    if (checkOutDate) {
+      const checkOut = new Date(checkOutDate);
+      if (isNaN(checkOut.getTime())) {
+        return res.status(400).json({ 
+          error: 'Invalid check-out date format' 
+        });
+      }
+      updateData.checkOutDate = checkOut;
+    }
+
     if (status) updateData.status = status;
-    if (totalPrice) updateData.totalPrice = Number(totalPrice);
+    if (totalPrice !== undefined) updateData.totalPrice = Number(totalPrice);
     if (paymentStatus) updateData.paymentStatus = paymentStatus;
+
+    updateData.updatedAt = new Date();
 
     const result = await mongodb
       .getDatabase()
@@ -134,37 +237,54 @@ const updateReservation = async (req, res) => {
       .updateOne({ _id: reservationId }, { $set: updateData });
 
     if (result.matchedCount === 0) {
-      return res.status(404).json({ error: 'Reservation not found.' });
+      return res.status(404).json({ 
+        error: 'Reservation not found' 
+      });
     }
 
-    res.status(200).json({ message: 'Reservation updated successfully' });
+    res.status(200).json({ 
+      message: 'Reservation updated successfully' 
+    });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to update reservation', details: error.message });
+    console.error('Error updating reservation:', error);
+    res.status(500).json({ 
+      error: 'Failed to update reservation', 
+      details: error.message 
+    });
   }
 };
 
-//Delete reservation
-
+// Delete reservation
 const deleteReservation = async (req, res) => {
-   //#swagger.tags=['reservations']
+  //#swagger.tags=['reservations']
   try {
-  if (!ObjectId.isValid(req.params.id)) {
-    res.status(400).json('Must use a valid reservation id to delete it');
-  }
-  const reservationId = new ObjectId(req.params.id);
-  const response = await mongodb
-    .getDatabase()
-    .db()
-    .collection('reservations')
-    .deleteOne({ _id: reservationId });
-  if (response.deletedCount > 0) {
+    if (!ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ 
+        error: 'Invalid reservation ID format' 
+      });
+    }
+
+    const reservationId = new ObjectId(req.params.id);
+    const result = await mongodb
+      .getDatabase()
+      .db()
+      .collection('reservations')
+      .deleteOne({ _id: reservationId });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ 
+        error: 'Reservation not found' 
+      });
+    }
+
     res.status(204).send();
-  } else {
-    res.status(500).json(response.error || 'Some error ocurred while deleting the reservation');
+  } catch (error) {
+    console.error('Error deleting reservation:', error);
+    res.status(500).json({ 
+      error: 'Failed to delete reservation', 
+      details: error.message 
+    });
   }
-} catch {
-  res.status(500).json({error: 'Failed to delete reservation', details: error.message});
-}
 };
 
 module.exports = {

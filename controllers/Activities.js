@@ -5,11 +5,14 @@ const ObjectId = require('mongodb').ObjectId;
 const getAllActivities = async (req, res) => {
   //#swagger.tags=['activities']
   try {
-  const result = await mongodb.getDatabase().db().collection('activities').find().toArray();
-  res.setHeader('Content-Type', 'application/json');
-  res.status(200).json(result);
-  } catch {
-    res.status(500).json({message: 'Error fetching activities', error: error.message});
+    const result = await mongodb.getDatabase().db().collection('activities').find().toArray();
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error fetching activities', 
+      error: error.message
+    });
   }
 };
 
@@ -17,21 +20,33 @@ const getAllActivities = async (req, res) => {
 const getActivityById = async (req, res) => {
   //#swagger.tags=['activities']
   try {
-  const activitiesId = new ObjectId(req.params.id);
-  const result = await mongodb
-    .getDatabase()
-    .db()
-    .collection('activities')
-    .findOne({ _id: activitiesId });
-  if (result) {
-    res.setHeader('Content-Type', 'application/json');
-    res.status(200).json(result);
-  } else {
-    res.status(404).json({ error: 'Activity not found.' });
+    if (!ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ 
+        message: 'Invalid activity ID format' 
+      });
+    }
+
+    const activitiesId = new ObjectId(req.params.id);
+    const result = await mongodb
+      .getDatabase()
+      .db()
+      .collection('activities')
+      .findOne({ _id: activitiesId });
+
+    if (result) {
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json(result);
+    } else {
+      res.status(404).json({ 
+        message: 'Activity not found' 
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error fetching activity', 
+      error: error.message
+    });
   }
-} catch {
-  res.status(500).json({message: 'Error fetching activity', error: error.message});
-}
 };
 
 // Add a new activity
@@ -39,20 +54,38 @@ const addActivity = async (req, res) => {
   //#swagger.tags=['activities']
   try {
     const { activityName, description, schedule, capacity, price, status } = req.body;
+
+    if (!activityName || !description || !schedule || !capacity || !price || status === undefined) {
+      return res.status(400).json({ 
+        message: 'Missing required fields' 
+      });
+    }
+
     const newActivity = {
       activityName,
       description,
       schedule,
       capacity,
       price,
-      status
+      status,
+      createdAt: new Date()
     };
-    await mongodb.getDatabase().db().collection('activities').insertOne(newActivity);
-    res
-      .status(201)
-      .json({ message: 'Activity added successfully', ActivityId: newActivity.insertedId });
+
+    const result = await mongodb
+      .getDatabase()
+      .db()
+      .collection('activities')
+      .insertOne(newActivity);
+
+    res.status(201).json({ 
+      message: 'Activity added successfully', 
+      activityId: result.insertedId 
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ 
+      message: 'Error adding activity',
+      error: error.message 
+    });
   }
 };
 
@@ -60,29 +93,29 @@ const addActivity = async (req, res) => {
 const updateActivity = async (req, res) => {
   //#swagger.tags=['activities']
   try {
+    if (!ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ 
+        message: 'Invalid activity ID format' 
+      });
+    }
+
     const activityId = new ObjectId(req.params.id);
     const { activityName, description, schedule, capacity, price, status } = req.body;
 
-    if (
-      !activityName ||
-      !description ||
-      !schedule ||
-      !capacity ||
-      !price ||
-      !status === undefined
-    ) {
-      return res.status(400).json({ error: 'Missing required fields' });
+    if (!activityName || !description || !schedule || !capacity || !price || status === undefined) {
+      return res.status(400).json({ 
+        message: 'Missing required fields' 
+      });
     }
 
     const updateActivity = {
-      activityName: req.body.activityName,
-      description: req.body.description,
-      schedule: req.body.schedule,
-      day: req.body.schedule.day,
-      time: req.body.schedule.time,
-      capacity: req.body.capacity,
-      price: req.body.price,
-      status: req.body.status
+      activityName,
+      description,
+      schedule,
+      capacity,
+      price,
+      status,
+      updatedAt: new Date()
     };
 
     const result = await mongodb
@@ -91,35 +124,52 @@ const updateActivity = async (req, res) => {
       .collection('activities')
       .replaceOne({ _id: activityId }, updateActivity);
 
-    if (result.modifiedCount === 0) {
-      return res.status(404).json({ message: 'Activity not found or no changes made.' });
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ 
+        message: 'Activity not found' 
+      });
     }
-    res.status(201).json({ message: 'Activity updated successfully' });
+
+    res.status(200).json({ 
+      message: 'Activity updated successfully' 
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ 
+      message: 'Error updating activity',
+      error: error.message 
+    });
   }
 };
 
 const deleteActivity = async (req, res) => {
   //#swagger.tags=['activities']
   try {
-  if (!ObjectId.isValid(req.params.id)) {
-    res.status(400).json('Must use a valid activity id to delete an activity');
+    if (!ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ 
+        message: 'Invalid activity ID format' 
+      });
+    }
+
+    const activityId = new ObjectId(req.params.id);
+    const response = await mongodb
+      .getDatabase()
+      .db()
+      .collection('activities')
+      .deleteOne({ _id: activityId });
+
+    if (response.deletedCount > 0) {
+      res.status(204).send();
+    } else {
+      res.status(404).json({ 
+        message: 'Activity not found' 
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error deleting activity', 
+      error: error.message
+    });
   }
-  const activityId = new ObjectId(req.params.id);
-  const response = await mongodb
-    .getDatabase()
-    .db()
-    .collection('activities')
-    .deleteOne({ _id: activityId });
-  if (response.deletedCount > 0) {
-    res.status(204).send();
-  } else {
-    res.status(500).json(response.error || 'Some error ocurred while deleting the activity');
-  }
-} catch {
-  res.status(500).json({message: 'Error deleting activity', error: error.message});
-}
 };
 
 module.exports = {
@@ -129,3 +179,4 @@ module.exports = {
   updateActivity,
   deleteActivity
 };
+

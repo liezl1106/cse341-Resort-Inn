@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "body-parser": "^1.20.3",
+    "connect-mongo": "^5.1.0",
+    "connect-mongodb-session": "^5.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
@@ -19,8 +21,18 @@
   "description": "cse341 Team Project by Jack Loo, Boluwatife Omotoyinbo, Dehyu DM Cassell, Dereck Romero Moscoso, Liezl Lizardo, Sarah Imarhenakhue Ogiefa",
   "main": "server.js",
   "scripts": {
-    "test": "jest",
-    "start": "nodemon server.js"
+    "test": "cross-env NODE_ENV=test jest --detectOpenHandles --forceExit --testTimeout=30000",
+    "test:watch": "cross-env NODE_ENV=test jest --watch --detectOpenHandles",
+    "start": "cross-env NODE_ENV=production nodemon server.js",
+    "dev": "cross-env NODE_ENV=development nodemon server.js"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testTimeout": 90000,
+    "setupFilesAfterEnv": [
+      "./jest.setup.js"
+    ],
+    "verbose": true
   },
   "repository": {
     "type": "git",
@@ -35,6 +47,7 @@
   },
   "homepage": "https://github.com/liezl1106/cse341-Resort-Inn#readme",
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "eslint": "^9.19.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.3",
