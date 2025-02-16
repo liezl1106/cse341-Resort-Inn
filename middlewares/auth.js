@@ -1,13 +1,3 @@
-// const ensureAuthenticated = (req, res, next) => {
-//     if (req.session.user === undefined){
-//       return res.status(401).json("You do not have access.");
-//   }
-//   next();
-// };
-
-
-// module.exports = ensureAuthenticated;
-
 const ensureAuthenticated = (req, res, next) => {
   // Check for session authentication
   if (req.session && req.session.user) {

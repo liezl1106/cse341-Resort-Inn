@@ -13,22 +13,6 @@ const GitHubStrategy = require('passport-github2').Strategy;
 
 // Middleware
 app.use(bodyParser.json());
-// app.use(session({
-//     secret: process.env.SESSION_SECRET,
-//     resave: false,
-//     saveUninitialized: true,
-//     store: MongoStore.create({
-//         mongoUrl: process.env.MONGODB_URI,
-//         collectionName: 'sessions',
-//         ttl: 24 * 60 * 60,
-//         autoRemove: 'native'
-//     }),
-//     cookie: {
-//         secure: process.env.NODE_ENV === 'production',
-//         httpOnly: true,
-//         maxAge: 24 * 60 * 60 * 1000
-//     }
-// }));
 app.use(session({
     secret: process.env.SESSION_SECRET || 'secret',
     resave: false,
@@ -59,19 +43,6 @@ passport.use(new GitHubStrategy({
     return done(null, profile);
 }));
 
-// Update the GitHub strategy to include access token
-// passport.use(new GitHubStrategy({
-//     clientID: process.env.GITHUB_CLIENT_ID,
-//     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-//     callbackURL: process.env.CALLBACK_URL
-// },
-// (accessToken, refreshToken, profile, done) => {
-//     // Store the access token in the profile
-//     profile.accessToken = accessToken;
-//     console.log('GitHub profile:', profile);
-//     return done(null, profile);
-// }));
-
 // Routes
 app.get('/', (req, res) => {
     res.send(
@@ -96,47 +67,6 @@ app.get(
       res.redirect('/');
     }
   );
-
-// app.get('/github/callback',
-//     passport.authenticate('github', {
-//       failureRedirect: '/api-docs',
-//       session: true,
-//     }),
-//     (req, res) => {
-//       try {
-//         req.session.user = req.user;
-//         req.session.save((err) => {
-//           if (err) {
-//             console.error('Session save error:', err);
-//             return res.redirect('/api-docs');
-//           }
-  
-//           // If you'd like to honor a "state" parameter:
-//           const state = req.query.state;
-//           const decodedState = state 
-//             ? Buffer.from(state, 'base64').toString()
-//             : '/';
-  
-//           // Get GitHub access token from Passport’s user object
-//           const token = req.user?.accessToken || '';
-  
-//           // If the user was originally heading for /api-docs, 
-//           // then we attach ?access_token=token and go straight to /api-docs
-//           if (decodedState.includes('api-docs')) {
-//             return res.redirect(`/api-docs?access_token=${token}`);
-//           } 
-//           // Otherwise, just go wherever else is appropriate
-//           else {
-//             return res.redirect(decodedState);
-//           }
-//         });
-//       } catch (error) {
-//         console.error('Callback error:', error);
-//         return res.redirect('/api-docs');
-//       }
-//     }
-//   );
-
 
 app.get('/logout', (req, res, next) => {
     req.logout((err) => {

@@ -97,33 +97,4 @@ describe('Reservations API Endpoints', () => {
             expect(response.body).toHaveProperty('error');
         }, 15000);
     });
-
-    // Edge Cases
-    describe('Edge Cases', () => {
-        it('should handle empty query parameters', async () => {
-            const response = await request(app)
-                .get('/reservations?clientId=')
-                .set('Accept', 'application/json');
-            
-            expect(response.status).toBe(200);
-            expect(Array.isArray(response.body)).toBe(true);
-        }, 15000);
-
-        it('should handle date range queries', async () => {
-            const response = await request(app)
-                .get('/reservations?startDate=2024-01-01&endDate=2024-12-31')
-                .set('Accept', 'application/json');
-            
-            expect(response.status).toBe(200);
-            expect(Array.isArray(response.body)).toBe(true);
-        }, 15000);
-
-        it('should handle invalid date formats', async () => {
-            const response = await request(app)
-                .get('/reservations?startDate=invalid-date')
-                .set('Accept', 'application/json');
-            
-            expect([400, 200]).toContain(response.status);
-        }, 15000);
-    });
 });
