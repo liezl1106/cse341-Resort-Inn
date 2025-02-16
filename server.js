@@ -52,7 +52,7 @@ app.get('/', (req, res) => {
     );
 });
 
-app.get('/auth/github',
+app.get('/github',
     passport.authenticate('github', { scope: ['user:email'] })
 );
 
